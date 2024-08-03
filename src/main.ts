@@ -1,4 +1,5 @@
 import * as THREE from "three"
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true})
@@ -7,14 +8,18 @@ renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setClearColor(0xffffff, 0)
 document.body.appendChild(renderer.domElement)
 
-// CAMERA
+// CAMERA & CONTROLS
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight
-)
+  )
+const controls = new OrbitControls( camera, renderer.domElement );
+controls.enablePan = false
+controls.enableZoom = false
 // camera.position.set(10, 5, 10)
 camera.position.set(20, 0, 0)
 camera.lookAt(0, 0, 0)
+controls.update()
 
 // SCENE
 const scene = new THREE.Scene()
@@ -68,20 +73,12 @@ function setupLights() {
 }
 
 function createStar1() {
-  // // OUTSIDE WIRE SPHERE
-  // const geometry = new THREE.SphereGeometry(4.5, 32, 8, 0 , Math.PI * 2, 0, Math.PI / 2)
-  // // const geometry = new THREE.SphereGeometry(5, 32, 8, 0 , Math.PI * 2, 0, Math.PI / 2)
-  // const material = new THREE.LineBasicMaterial({ color: 0x000000 })
-  // const wire = new THREE.EdgesGeometry(geometry)
-  // const wireSphere = new THREE.LineSegments(wire, material)
-
   const sphere = makeSphere(2, '#000000')
   const insideDemiSphere = makeDemiSphere(4.5, '#dddddd')
   const outsideDemiSphere = makeDemiSphere(5, '#000000')
   const ring = makeRing(4.5, 5, '#dddddd', '#000000')
 
   star1.add( sphere, insideDemiSphere, outsideDemiSphere, ring)
-  // star1.add( sphere, wireSphere, insideDemiSphere, outsideDemiSphere, ring)
 }
 
 function createStar2() {
@@ -91,6 +88,20 @@ function createStar2() {
     const ring3 = makeRing(4.2, 6, '#000000', '#dddddd')
     star2.add(sphere, ring1, ring2, ring3)
 }
+
+// function createStar3() {
+//   const sphere = makeSphere(2, '#000000')
+
+//   const ring = makeTorus(4, 0.05, '#000000', '#dddddd')
+//   const satellite = makeSphere(0.5, '#000000', [0,4,0]) 
+//   ring.add(satellite)
+
+//   const ring2 = makeTorus(6, 0.05, '#000000', '#dddddd')
+//   const satellite2 = makeSphere(0.3, '#000000', [0,6,0])  
+//   ring2.add(satellite2)
+
+//   star3.add(sphere, ring, ring2)
+// }
 
 function createStar3() {
   const sphere = makeSphere(2, '#000000')
@@ -118,6 +129,17 @@ function makeRing(innerRadius: number, outerRadius: number, color: string, borde
   ring.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2)
   return ring
 }
+
+// function makeTorus(innerRadius: number, thickness: number, color: string, borderColor: string) {
+//   const ring = new THREE.Group()
+//   const geometry = new THREE.TorusGeometry(innerRadius, thickness, 32, 32)
+//   const material = new THREE.MeshLambertMaterial({ color: color, side: THREE.DoubleSide })
+//   const mesh = new THREE.Mesh(geometry, material)
+//   ring.add(mesh)
+//   // ring.add(mesh)
+//   ring.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2)
+//   return ring
+// }
 
 function makeSphere(radius: number, color: string, position?: [number, number, number]) {
   const sphereGeometry = new THREE.SphereGeometry(radius, 32, 32)
