@@ -2,8 +2,6 @@ import * as THREE from "three"
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { gsap } from "gsap";
 
-let activeStar = "star1";
-
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setPixelRatio(window.devicePixelRatio)
@@ -29,13 +27,15 @@ controls.update()
 const scene = new THREE.Scene()
 
 window.addEventListener("resize", onWindowResize)
-document.querySelector("button")?.addEventListener("click", next)
+document.querySelector("#next")?.addEventListener("click", next)
+document.querySelector("#previous")?.addEventListener("click", previous)
 
 // STARS
 const star1 = new THREE.Group()
 const star2 = new THREE.Group()
 const star3 = new THREE.Group()
 scene.add(star1, star2, star3)
+let starState: starGroup = { front: star1, left: star2, right: star3 }
 
 // FOG
 scene.fog = new THREE.Fog(0xdddddd, 0, 28);
@@ -82,18 +82,20 @@ function setupLights() {
 
 function createStar1() {
   const sphere = makeSphere(2, '#000000')
+  // const insideDemiSphere = makeDemiSphere(4.5, '#000000')
   const insideDemiSphere = makeDemiSphere(4.5, '#dddddd')
+  // const insideDemiSphere = makeDemiSphere(4.5, '#dddddd')
   const outsideDemiSphere = makeDemiSphere(5, '#000000')
-  const ring = makeRing(4.5, 5, '#dddddd', '#000000')
+  const ring = makeRing(4.5, 5)
 
   star1.add(sphere, insideDemiSphere, outsideDemiSphere, ring)
 }
 
 function createStar2() {
   const sphere = makeSphere(2, '#000000')
-  const ring1 = makeRing(2.5, 3, '#000000', '#dddddd')
-  const ring2 = makeRing(3.2, 4, '#000000', '#dddddd')
-  const ring3 = makeRing(4.2, 6, '#000000', '#dddddd')
+  const ring1 = makeRing(2.5, 3)
+  const ring2 = makeRing(3.2, 4)
+  const ring3 = makeRing(4.2, 6)
   star2.add(sphere, ring1, ring2, ring3)
 }
 
@@ -125,27 +127,34 @@ function createStar3() {
 //   star3.add(sphere, ring, ring2)
 // }
 
-function makeRing(innerRadius: number, outerRadius: number, color: string, borderColor: string) {
+function makeRing(innerRadius: number, outerRadius: number) {
   const ring = new THREE.Group()
   const geometry = new THREE.RingGeometry(innerRadius, outerRadius, 32, 32)
-  const material = new THREE.MeshLambertMaterial({ color: color, side: THREE.DoubleSide })
+  const material = new THREE.MeshLambertMaterial({ color: "#000000", side: THREE.DoubleSide })
   const mesh = new THREE.Mesh(geometry, material)
-  const wireMaterial = new THREE.LineBasicMaterial({ color: borderColor })
-  const wireGeometry = new THREE.EdgesGeometry(geometry)
-  const wire = new THREE.LineSegments(wireGeometry, wireMaterial)
-  ring.add(mesh, wire)
-  // ring.add(mesh)
+  ring.add(mesh)
   ring.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2)
   return ring
 }
+// function makeRing(innerRadius: number, outerRadius: number, color: string, borderColor: string) {
+//   const ring = new THREE.Group()
+//   const geometry = new THREE.RingGeometry(innerRadius, outerRadius, 32, 32)
+//   const material = new THREE.MeshLambertMaterial({ color: color, side: THREE.DoubleSide })
+//   const mesh = new THREE.Mesh(geometry, material)
+//   const wireMaterial = new THREE.LineBasicMaterial({ color: borderColor })
+//   const wireGeometry = new THREE.EdgesGeometry(geometry)
+//   const wire = new THREE.LineSegments(wireGeometry, wireMaterial)
+//   ring.add(mesh, wire)
+//   ring.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2)
+//   return ring
+// }
 
-function makeTorus(innerRadius: number, thickness: number, color: string, borderColor: string) {
+function makeTorus(innerRadius: number, thickness: number, color: string, _borderColor: string) {
   const ring = new THREE.Group()
   const geometry = new THREE.TorusGeometry(innerRadius, thickness, 32, 32)
   const material = new THREE.MeshLambertMaterial({ color: color, side: THREE.DoubleSide })
   const mesh = new THREE.Mesh(geometry, material)
   ring.add(mesh)
-  // ring.add(mesh)
   ring.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2)
   return ring
 }
@@ -169,30 +178,43 @@ function makeDemiSphere(radius: number, color: string) {
 }
 
 function next() {
-  if (activeStar === "star1") {
-    gsap.to(star3.position, { x: 12, y: 0, z: 0, ease: "power2.inOut" });
-    gsap.to(star1.position, { x: 0, y: 0, z: 10, ease: "power2.inOut" });
-    gsap.to(star2.position, { x: 0, y: 0, z: -10, ease: "power2.inOut" });
-    activeStar = "star3"
-  }
-  else if (activeStar === "star3") {
-    gsap.to(star2.position, { x: 12, y: 0, z: 0, ease: "power2.inOut" });
-    gsap.to(star3.position, { x: 0, y: 0, z: 10, ease: "power2.inOut" });
-    gsap.to(star1.position, { x: 0, y: 0, z: -10, ease: "power2.inOut" });
-    activeStar = "star2"
-  }
-  else if (activeStar === "star2") {
-    gsap.to(star1.position, { x: 12, y: 0, z: 0, ease: "power2.inOut" });
-    gsap.to(star2.position, { x: 0, y: 0, z: 10, ease: "power2.inOut" });
-    gsap.to(star3.position, { x: 0, y: 0, z: -10, ease: "power2.inOut" });
-    activeStar = "star1"
-  }
+  starState = { front: starState.right, left: starState.front, right: starState.left }
+  moveStars(starState)
+}
+
+function previous() {
+  starState = { front: starState.left, left: starState.right, right: starState.front }
+  moveStars(starState)
+}
+
+interface starGroup {
+  front: THREE.Group<THREE.Object3DEventMap>;
+  left: THREE.Group<THREE.Object3DEventMap>;
+  right: THREE.Group<THREE.Object3DEventMap>;
+}
+
+function moveStars(group: starGroup) {
+  gsap.to(group.front.position, {
+    x: 12, y: 0, z: 0,
+    ease: "power3.inOut",
+    duration: 0.3
+  });
+  gsap.to(group.left.position, {
+    x: 0, y: 0, z: 10,
+    ease: "power3.inOut",
+    duration: 0.3
+  });
+  gsap.to(group.right.position, {
+    x: 0, y: 0, z: -10,
+    ease: "power3.inOut",
+    duration: 0.3
+  })
 }
 
 // INIT
 createStar1()
 star1.position.set(12, 0, 0)
-star1.scale.set(0.2, 0.2, 0.2)
+star1.scale.set(.2, .2, .2)
 
 createStar2()
 star2.position.set(0, 0, 10)

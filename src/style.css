@@ -1,11 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Badeen+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap');
 
 * {
   box-sizing: content-box;
 }
 
 body {
-  font-family: "Badeen Display", system-ui;
+  font-family: "Sixtyfour", system-ui;
   font-weight: 400;
   font-style: normal;
   width: 100vw;
@@ -25,8 +26,43 @@ body {
   pointer-events: none;
 }
 
+.dot {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  position: absolute;
+  background-color: red;
+  height: 20rem;
+  width: 20rem;
+  opacity: 0.2;
+  backdrop-filter: invert(70%);
+  backdrop-filter: blur(50px);
+  border-radius: 100%;
+  z-index: 100;
+}
+
+.controls {
+  position: absolute;
+  right: 2rem;
+  bottom: 2rem;
+}
+
 button {
   pointer-events: initial;
+  padding: 1rem 2rem;
+  outline: none;
+  background-color: transparent;
+  color: #000;
+  cursor: pointer;
+  background-color: #ff000030;
+  border: none;
+  font-family: "Sixtyfour", system-ui;
+  font-weight: 400;
+  font-size: 5rem;
+  line-height: 5rem;
+  border-radius: 30px;
 }
 
 h1 {
@@ -39,16 +75,18 @@ h1 {
   margin: 0;
   font-weight: 400;
   position: absolute;
+  /* color: #ff000030; */
 }
 
 .num {
   position: absolute;
-  top: -0.9rem;
+  top: 0;
   right: 0;
-  font-size: 15rem;
-  line-height: 10rem;
+  font-size: 50vh;
+  line-height: 50vh;
   padding: 0 0.25rem;
   margin: 0;
+  opacity: 0.1;
   font-weight: 400;
   position: absolute;
 }
