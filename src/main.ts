@@ -1,6 +1,12 @@
 import * as THREE from "three"
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { gsap } from "gsap";
+import Stats from "three/examples/jsm/libs/stats.module.js";
+
+// STATS
+var stats = new Stats();
+stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom);
 
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -18,7 +24,6 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = false
 controls.enableZoom = false
 controls.enableRotate = false
-// camera.position.set(10, 5, 10)
 camera.position.set(20, 0, 0)
 camera.lookAt(0, 0, 0)
 controls.update()
@@ -26,6 +31,7 @@ controls.update()
 // SCENE
 const scene = new THREE.Scene()
 
+// EVENTS
 window.addEventListener("resize", onWindowResize)
 document.querySelector("#next")?.addEventListener("click", next)
 document.querySelector("#previous")?.addEventListener("click", previous)
@@ -38,35 +44,56 @@ scene.add(star1, star2, star3)
 let starState: starGroup = { front: star1, left: star2, right: star3 }
 
 // FOG
-scene.fog = new THREE.Fog(0xdddddd, 0, 28);
-
+scene.fog = new THREE.Fog(0xdddddd, 0, 30);
 
 // ANIMATE
 function animate() {
+  stats.begin();
+
   renderer.render(scene, camera)
+  if (starState.front === star1) {
+    rotateStar1()
+  } else if (starState.front === star2) {
+    rotateStar2()
+  } else {
+    rotateStar3()
+  }
 
-  star1?.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.sin(Date.now() / 3000) * 0.005)
-  star1?.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.sin(Date.now() / 3000) * 0.01)
-  star1?.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.sin(Date.now() / 4500) * 0.015)
-
-  star2?.children[1]?.rotateOnAxis(new THREE.Vector3(1.0, 0, 0), Math.sin(Date.now() / 3000) * 0.005)
-  star2?.children[1]?.rotateOnAxis(new THREE.Vector3(0, 1.0, 0), Math.sin(Date.now() / 3000) * 0.005)
-  star2?.children[1]?.rotateOnAxis(new THREE.Vector3(0, 0, 1.0), Math.sin(Date.now() / 3000) * 0.005)
-  star2?.children[2]?.rotateOnAxis(new THREE.Vector3(0.6, 0, 0), Math.sin(Date.now() / 3000) * 0.005)
-  star2?.children[2]?.rotateOnAxis(new THREE.Vector3(0, 0.6, 0), Math.sin(Date.now() / 3000) * 0.005)
-  star2?.children[2]?.rotateOnAxis(new THREE.Vector3(0, 0, 0.6), Math.sin(Date.now() / 3000) * 0.005)
-  star2?.children[3]?.rotateOnAxis(new THREE.Vector3(0.3, 0, 0), Math.sin(Date.now() / 3000) * 0.005)
-  star2?.children[3]?.rotateOnAxis(new THREE.Vector3(0, 0.3, 0), Math.sin(Date.now() / 3000) * 0.005)
-  star2?.children[3]?.rotateOnAxis(new THREE.Vector3(0, 0, 0.3), Math.sin(Date.now() / 3000) * 0.005)
-
-  star3?.children[1]?.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.sin(Date.now() / 3000) * 0.005)
-  star3?.children[1]?.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.sin(Date.now() / 3000) * 0.03)
-  star3?.children[1]?.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.sin(Date.now() / 4500) * 0.015)
-  star3?.children[2]?.rotateOnAxis(new THREE.Vector3(-1, 0, 0), Math.sin(Date.now() / 4500) * 0.015)
-  star3?.children[2]?.rotateOnAxis(new THREE.Vector3(0, 0, -1), Math.sin(Date.now() / 3500) * 0.02)
-  star3?.children[2]?.rotateOnAxis(new THREE.Vector3(0, -1, 0), Math.sin(Date.now() / 3000) * 0.005)
-
+  stats.end();
   requestAnimationFrame(animate)
+}
+
+function rotateStar1() {
+  star1.rotateX(Math.sin(Date.now() / 3000) * 0.005)
+  star1.rotateY(Math.sin(Date.now() / 3000) * 0.01)
+  star1.rotateZ(Math.sin(Date.now() / 4500) * 0.015)
+}
+
+function rotateStar2() {
+  const [ring1, ring2, ring3] = star2.children.slice(1)
+
+  ring1.rotateX(Math.sin(Date.now() / 3000) * 0.005)
+  ring1.rotateY(Math.sin(Date.now() / 3000) * 0.005)
+  ring1.rotateZ(Math.sin(Date.now() / 3000) * 0.005)
+
+  ring2.rotateOnAxis(new THREE.Vector3(0.6, 0, 0), Math.sin(Date.now() / 3000) * 0.005)
+  ring2.rotateOnAxis(new THREE.Vector3(0, 0.6, 0), Math.sin(Date.now() / 3000) * 0.005)
+  ring2.rotateOnAxis(new THREE.Vector3(0, 0, 0.6), Math.sin(Date.now() / 3000) * 0.005)
+
+  ring3.rotateOnAxis(new THREE.Vector3(0.3, 0, 0), Math.sin(Date.now() / 3000) * 0.005)
+  ring3.rotateOnAxis(new THREE.Vector3(0, 0.3, 0), Math.sin(Date.now() / 3000) * 0.005)
+  ring3.rotateOnAxis(new THREE.Vector3(0, 0, 0.3), Math.sin(Date.now() / 3000) * 0.005)
+}
+
+function rotateStar3() {
+  const [ring1, ring2] = star3.children.slice(1)
+
+  ring1.rotateX(Math.sin(Date.now() / 3000) * 0.005)
+  ring1.rotateY(Math.sin(Date.now() / 4500) * 0.015)
+  ring1.rotateZ(Math.sin(Date.now() / 3000) * 0.03)
+  ring2.rotateX(- Math.sin(Date.now() / 4500) * 0.015)
+  ring2.rotateY(- Math.sin(Date.now() / 3000) * 0.005)
+  ring2.rotateZ(- Math.sin(Date.now() / 3500) * 0.02)
 }
 
 function onWindowResize() {
@@ -76,19 +103,15 @@ function onWindowResize() {
 }
 
 function setupLights() {
-  const light3 = new THREE.AmbientLight(0xdddddd, 4)
+  const light3 = new THREE.AmbientLight(0xdddddd, 5)
   scene.add(light3)
 }
 
 function createStar1() {
   const sphere = makeSphere(2, '#000000')
-  // const insideDemiSphere = makeDemiSphere(4.5, '#000000')
-  const insideDemiSphere = makeDemiSphere(4.5, '#dddddd')
-  // const insideDemiSphere = makeDemiSphere(4.5, '#dddddd')
   const outsideDemiSphere = makeDemiSphere(5, '#000000')
   const ring = makeRing(4.5, 5)
-
-  star1.add(sphere, insideDemiSphere, outsideDemiSphere, ring)
+  star1.add(sphere, outsideDemiSphere, ring)
 }
 
 function createStar2() {
@@ -113,20 +136,6 @@ function createStar3() {
   star3.add(sphere, ring, ring2)
 }
 
-// function createStar3() {
-//   const sphere = makeSphere(2, '#000000')
-
-//   const ring = makeRing(4, 4.2, '#000000', '#dddddd')
-//   const satellite = makeSphere(0.5, '#000000', [0,4,0]) 
-//   ring.add(satellite)
-
-//   const ring2 = makeRing(6, 6.2, '#000000', '#dddddd')
-//   const satellite2 = makeSphere(0.3, '#000000', [0,6,0])  
-//   ring2.add(satellite2)
-
-//   star3.add(sphere, ring, ring2)
-// }
-
 function makeRing(innerRadius: number, outerRadius: number) {
   const ring = new THREE.Group()
   const geometry = new THREE.RingGeometry(innerRadius, outerRadius, 32, 32)
@@ -136,18 +145,6 @@ function makeRing(innerRadius: number, outerRadius: number) {
   ring.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2)
   return ring
 }
-// function makeRing(innerRadius: number, outerRadius: number, color: string, borderColor: string) {
-//   const ring = new THREE.Group()
-//   const geometry = new THREE.RingGeometry(innerRadius, outerRadius, 32, 32)
-//   const material = new THREE.MeshLambertMaterial({ color: color, side: THREE.DoubleSide })
-//   const mesh = new THREE.Mesh(geometry, material)
-//   const wireMaterial = new THREE.LineBasicMaterial({ color: borderColor })
-//   const wireGeometry = new THREE.EdgesGeometry(geometry)
-//   const wire = new THREE.LineSegments(wireGeometry, wireMaterial)
-//   ring.add(mesh, wire)
-//   ring.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2)
-//   return ring
-// }
 
 function makeTorus(innerRadius: number, thickness: number, color: string, _borderColor: string) {
   const ring = new THREE.Group()
@@ -171,7 +168,7 @@ function makeSphere(radius: number, color: string, position?: [number, number, n
 
 function makeDemiSphere(radius: number, color: string) {
   const sphereGeometry = new THREE.SphereGeometry(radius, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2)
-  const sphereMaterial = new THREE.MeshLambertMaterial({ color: color, side: THREE.DoubleSide })
+  const sphereMaterial = new THREE.MeshLambertMaterial({ color: color })
   const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial)
   sphere.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI)
   return sphere
@@ -179,12 +176,24 @@ function makeDemiSphere(radius: number, color: string) {
 
 function next() {
   starState = { front: starState.right, left: starState.front, right: starState.left }
-  moveStars(starState)
+  moveStars(starState, 'next')
 }
 
 function previous() {
   starState = { front: starState.left, left: starState.right, right: starState.front }
-  moveStars(starState)
+  moveStars(starState, 'prev')
+}
+
+function setColor() {
+  // Set the value of variable --blue to another value (in this case "lightblue")
+  var r: HTMLElement | null = document.querySelector(':root');
+  if (starState.front === star1) {
+    r?.style.setProperty('--color', '#ff000099');
+  } else if (starState.front === star2) {
+    r?.style.setProperty('--color', '#0000ff77');
+  } else {
+    r?.style.setProperty('--color', '#00ff0055');
+  }
 }
 
 interface starGroup {
@@ -193,22 +202,62 @@ interface starGroup {
   right: THREE.Group<THREE.Object3DEventMap>;
 }
 
-function moveStars(group: starGroup) {
-  gsap.to(group.front.position, {
-    x: 12, y: 0, z: 0,
-    ease: "power3.inOut",
-    duration: 0.3
-  });
-  gsap.to(group.left.position, {
-    x: 0, y: 0, z: 10,
-    ease: "power3.inOut",
-    duration: 0.3
-  });
-  gsap.to(group.right.position, {
-    x: 0, y: 0, z: -10,
-    ease: "power3.inOut",
-    duration: 0.3
-  })
+function moveStars(group: starGroup, direction?: 'next' | 'prev') {
+  const tl: GSAPTimeline = gsap.timeline()
+  setColor()
+
+  tl
+    .to(group.front.position, {
+      x: 12, y: 0, z: 0,
+      ease: "power3.inOut",
+      duration: 0.4
+    }, 0)
+    .to(group.left.position, {
+      x: 0, y: 0, z: 10,
+      ease: "power3.inOut",
+      duration: 0.4
+    }, 0)
+    .to(group.right.position, {
+      x: 0, y: 0, z: -10,
+      ease: "power3.inOut",
+      duration: 0.4
+    }, 0)
+    .to(group.front, {
+      visible: true,
+      duration: 0
+    })
+
+  if (direction === 'next') {
+    tl
+      .to(group.right, {
+        visible: false,
+        duration: 0
+      }, '0.15')
+      .to(group.right, {
+        visible: true,
+        duration: 0
+      }, '0.3')
+  } else {
+    tl
+      .to(group.left, {
+        visible: false,
+        duration: 0
+      }, '0.15')
+      .to(group.left, {
+        visible: true,
+        duration: 0
+      }, '0.3')
+  }
+
+}
+
+function updateCoords() {
+  const elements = document.querySelectorAll('.coord')
+  setInterval(function () {
+    elements?.forEach(e => {
+      e.innerHTML = (Math.random() * 999).toString()
+    })
+  }, 1000);
 }
 
 // INIT
@@ -226,3 +275,4 @@ star3.scale.set(.2, .2, .2)
 
 setupLights()
 animate()
+updateCoords()
