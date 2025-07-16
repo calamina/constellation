@@ -16,5 +16,7 @@ Three simple threeJS planets :)
 
 - make specific data for each planet
 
+- change background color :/
+
 - clean css
 - clean ts

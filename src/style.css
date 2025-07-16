@@ -143,6 +143,8 @@ body {
   justify-content: space-between;
   padding: 0.25rem;
   box-sizing: border-box;
+  overflow: hidden;
+  gap: 1rem;
 
   p {
     margin: 0;
@@ -199,5 +201,17 @@ button {
 
   &:hover {
     padding: 0.5rem 2rem;
+  }
+}
+
+@media (max-width: 1250px) {
+  .dotside {
+    display: none;
+  }
+
+  .dot,
+  .data {
+    width: 95vw;
+    height: 70vh;
   }
 }
