@@ -8,7 +8,6 @@ Three simple threeJS planets :)
 
 # TODO
 
-- replace animation stop for idle planets by animation slow
 - add another top right block right in the corner
 - add a fake bar graph
 - add a timer/clock w/ fake hours/date
