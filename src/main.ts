@@ -17,26 +17,26 @@ const data = {
     scientific: "Globanthea-02C",
     galaxy: "Canthora Twin Galaxy",
     distance: "215.003 UVs",
-    type: "Gaz Giant",
+    type: "Gas Giant",
     inhab: "Non-inhabitable",
   },
   star2: {
-    index: 2,
-    name: "test",
-    scientific: "test",
-    galaxy: "test",
-    distance: "test",
-    type: "test",
-    inhab: "test",
+    index: 3,
+    name: "Anantha ",
+    scientific: "Socialedes-665-2",
+    galaxy: "Pontelius Major",
+    distance: "3.5e10 UVs",
+    type: "Pulsar Planet",
+    inhab: "Non-inhabitable",
   },
   star3: {
-    index: 3,
-    name: "test",
-    scientific: "test",
-    galaxy: "test",
-    distance: "test",
-    type: "test",
-    inhab: "test",
+    index: 2,
+    name: "Pangùr Ban",
+    scientific: "Erastreïdes-1X",
+    galaxy: "Potar Nebulae",
+    distance: "1.29e14 UVs",
+    type: "Silicate Planet",
+    inhab: "???",
   }
 }
 
@@ -229,11 +229,30 @@ function previous() {
   setData(starState.front.name as StarName)
 }
 
-function setData(name: StarName) {
-  const elements = document.querySelector('.main')?.children
+function setData(star: StarName) {
+  const active = data[star]
+  const titleElements = Array.from(document.querySelector('.main')?.children ?? [])
+  const infoElements = Array.from(document.querySelector('.type')?.children ?? [])
+  const [name, scientific, galaxy] = titleElements
+  const [distance, type, inhab] = infoElements
+  const index = document.querySelector('#index')
 
-  console.debug(data[name])
-  console.debug(Array.from(elements ?? []).map(e => e))
+  if (index) index.innerHTML = active.index.toString()
+
+  name.innerHTML = active.name
+  scientific.innerHTML = active.scientific
+  galaxy.innerHTML = active.galaxy
+  distance.innerHTML = active.distance
+  type.innerHTML = active.type
+  inhab.innerHTML = active.inhab
+
+  Array.from(document.querySelector('.topology')?.children ?? []).forEach(el => {
+    if (el.classList.contains('topology' + active.index.toString())) {
+      el.classList.remove('topohidden')
+    }
+    else { el.classList.add('topohidden') }
+  })
+
 }
 
 function setColor() {

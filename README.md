@@ -9,11 +9,10 @@ Three simple threeJS planets :)
 # TODO
 
 - add another top right block right in the corner
-- add a fake bar graph
 - add a timer/clock w/ fake hours/date
 - add an svg / utf8
+- add satellites / rings
 
-- make specific data for each planet
 
 - change background color :/
 
