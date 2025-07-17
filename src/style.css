@@ -130,6 +130,7 @@ body {
     font-size: 0.9rem;
     margin: 0;
     padding: 0;
+    color: #00000070;
   }
 }
 
@@ -142,6 +143,7 @@ body {
   align-items: center;
   justify-content: center;
   width: 8rem;
+  width: fit-content;
   /* height: 4rem; */
   border: 1px solid #000000;
 
@@ -156,10 +158,25 @@ body {
   }
 }
 
-.topo1 {
+.topowrapper {
+  width: 100%;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   width: 4rem;
   height: 4rem;
+  transition: width 0.3s;
+
+  &:hover {
+    width: 8rem;
+  }
+}
+
+.topo1 {
   border-right: 1px solid #000000;
 
   .sphere {
@@ -182,14 +199,11 @@ body {
 }
 
 .topo1side {
-  position: relative;
-  width: 4rem;
-
   .sphere {
     position: absolute;
     left: 0;
     right: 0;
-    top: 0;
+    top: calc(2rem - 1px);
     margin: 0 auto;
     width: 3rem;
     height: 1.5rem;
@@ -202,9 +216,6 @@ body {
 
 
 .topo2 {
-  position: relative;
-  width: 4rem;
-  height: 4rem;
   border-right: 1px solid #000000;
 
   .ring {
@@ -226,15 +237,7 @@ body {
   }
 }
 
-.topo2side {
-  position: relative;
-  width: 4rem;
-}
-
 .topo3 {
-  position: relative;
-  width: 4rem;
-  height: 4rem;
   border-right: 1px solid #000000;
 
   .ring {
@@ -264,16 +267,11 @@ body {
   }
 }
 
-.topo3side {
-  position: relative;
-  width: 4rem;
-}
-
 .topoline {
   position: absolute;
   left: 0;
   right: 0;
-  top: 0;
+  top: calc(2rem - 1px);
   margin: 0 auto;
   width: 1rem;
   height: 1rem;

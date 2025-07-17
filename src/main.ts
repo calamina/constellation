@@ -246,13 +246,9 @@ function setData(star: StarName) {
   type.innerHTML = active.type
   inhab.innerHTML = active.inhab
 
-  Array.from(document.querySelector('.topology')?.children ?? []).forEach(el => {
-    if (el.classList.contains('topology' + active.index.toString())) {
-      el.classList.remove('topohidden')
-    }
-    else { el.classList.add('topohidden') }
-  })
-
+  const topos = Array.from(document.querySelector('.topology')?.children ?? [])
+  topos.forEach(el => el.classList.add('topohidden'))
+  topos[active.index - 1].classList.remove('topohidden')
 }
 
 function setColor() {
