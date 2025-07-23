@@ -1,5 +1,4 @@
 import * as THREE from "three"
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { gsap } from "gsap";
 
 interface starGroup {
@@ -47,26 +46,19 @@ renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setClearColor(0xffffff, 0)
 document.body.appendChild(renderer.domElement)
 
-// CAMERA & CONTROLS
+// CAMERA & RAYCASTER
 const camera = new THREE.PerspectiveCamera(
-  45,
-  window.innerWidth / window.innerHeight
+  45, window.innerWidth / window.innerHeight
 )
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enablePan = false
-controls.enableZoom = false
-controls.enableRotate = false
-camera.position.set(20, 0, 0)
+const raycaster = new THREE.Raycaster
+const pointer = new THREE.Vector2();
+
+camera.position.set(20, 0.25, 0)
 camera.lookAt(0, 0, 0)
-controls.update()
+raycaster.setFromCamera(pointer, camera);
 
 // SCENE
 const scene = new THREE.Scene()
-
-// EVENTS
-window.addEventListener("resize", onWindowResize)
-document.querySelector("#next")?.addEventListener("click", next)
-document.querySelector("#previous")?.addEventListener("click", previous)
 
 // STARS
 const star1 = new THREE.Group()
@@ -75,63 +67,55 @@ const star2 = new THREE.Group()
 star2.name = "star2"
 const star3 = new THREE.Group()
 star3.name = "star3"
-scene.add(star1, star2, star3)
+const star4 = new THREE.Group()
+star4.name = "star4"
 let starState: starGroup = { front: star1, left: star2, right: star3 }
 
-// FOG
-scene.fog = new THREE.Fog(0xdddddd, 0, 30);
+// EVENTS
+window.addEventListener('click', raycast);
+window.addEventListener('pointermove', onPointerMove);
+window.addEventListener("resize", onWindowResize)
+document.querySelector("#next")?.addEventListener("click", next)
+document.querySelector("#previous")?.addEventListener("click", previous)
 
-// ANIMATE
-function animate() {
-  renderer.render(scene, camera)
-  if (starState.front === star1) {
-    rotateStar1()
-    rotateStar2(0.1)
-    rotateStar3(0.1)
-  } else if (starState.front === star2) {
-    rotateStar1(0.1)
-    rotateStar2()
-    rotateStar3(0.1)
-  } else {
-    rotateStar1(0.1)
-    rotateStar2(0.1)
-    rotateStar3()
-  }
-  requestAnimationFrame(animate)
+
+function rotateStar1() {
+  star1.rotateX(Math.sin(Date.now() / 3000) * 0.005)
+  star1.rotateY(Math.sin(Date.now() / 3000) * 0.01)
+  star1.rotateZ(Math.sin(Date.now() / 4500) * 0.015)
 }
 
-function rotateStar1(factor: number = 1) {
-  star1.rotateX(Math.sin(Date.now() / 3000) * factor * 0.005)
-  star1.rotateY(Math.sin(Date.now() / 3000) * factor * 0.01)
-  star1.rotateZ(Math.sin(Date.now() / 4500) * factor * 0.015)
-}
-
-function rotateStar2(factor: number = 1) {
-  const [ring1, ring2, ring3] = star2.children.slice(1)
+function rotateStar2() {
+  const [ring1, ring2, ring3] = star2.children
   const rotation = Math.sin(Date.now() / 3000) * 0.01
 
-  ring1.rotateX(rotation * factor)
-  ring1.rotateY(rotation * factor)
-  ring1.rotateZ(rotation * factor)
+  ring1.rotateX(rotation)
+  ring1.rotateY(rotation)
+  ring1.rotateZ(rotation)
 
-  ring2.rotateX(rotation * factor * 0.8)
-  ring2.rotateY(rotation * factor * 0.8)
-  ring2.rotateZ(rotation * factor * 0.8)
+  ring2.rotateX(rotation * 0.8)
+  ring2.rotateY(rotation * 0.8)
+  ring2.rotateZ(rotation * 0.8)
 
-  ring3.rotateX(rotation * factor * 0.6)
-  ring3.rotateY(rotation * factor * 0.6)
-  ring3.rotateZ(rotation * factor * 0.6)
+  ring3.rotateX(rotation * 0.6)
+  ring3.rotateY(rotation * 0.6)
+  ring3.rotateZ(rotation * 0.6)
 }
 
-function rotateStar3(factor: number = 1) {
-  const [ring1, ring2] = star3.children.slice(1)
+function rotateStar3() {
+  const [ring1, ring2] = star3.children
 
-  ring1.rotateX(Math.sin(Date.now() / 3000) * factor * 0.005)
-  ring1.rotateY(Math.sin(Date.now() / 4500) * factor * 0.015)
-  ring1.rotateZ(Math.sin(Date.now() / 3000) * factor * 0.03)
-  ring2.rotateX(- Math.sin(Date.now() / 4500) * factor * 0.015)
-  ring2.rotateY(- Math.sin(Date.now() / 3000) * factor * 0.005)
-  ring2.rotateZ(- Math.sin(Date.now() / 3500) * factor * 0.02)
+  ring1.rotateX(Math.sin(Date.now() / 3000) * 0.005)
+  ring1.rotateY(Math.sin(Date.now() / 4500) * 0.015)
+  ring1.rotateZ(Math.sin(Date.now() / 3000) * 0.03)
+  ring2.rotateX(- Math.sin(Date.now() / 4500) * 0.015)
+  ring2.rotateY(- Math.sin(Date.now() / 3000) * 0.005)
+  ring2.rotateZ(- Math.sin(Date.now() / 3500) * 0.02)
+}
+
+function onPointerMove(event: MouseEvent) {
+  pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+  pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
 }
 
 function onWindowResize() {
@@ -140,31 +124,32 @@ function onWindowResize() {
   camera.updateProjectionMatrix()
 }
 
-function setupLights() {
-  const light3 = new THREE.AmbientLight(0xdddddd, 5)
-  scene.add(light3)
+function createCore() {
+  const sphere = makeSphere(2, '#000000')
+  sphere.name = "core"
+  sphere.scale.set(.2, .2, .2)
+  sphere.position.set(12, 0.25, 0)
+  scene.add(sphere)
 }
 
 function createStar1() {
-  const sphere = makeSphere(2, '#000000')
   const outsideDemiSphere = makeDemiSphere(5, '#000000')
   const ring = makeRing(4.5, 5)
-  star1.add(sphere, outsideDemiSphere, ring)
+  star1.add(outsideDemiSphere, ring)
   star1.scale.set(.2, .2, .2)
+  star1.position.set(12, 0.25, 0)
 }
 
 function createStar2() {
-  const sphere = makeSphere(2, '#000000')
   const ring1 = makeRing(2.5, 3)
   const ring2 = makeRing(3.2, 4)
   const ring3 = makeRing(4.2, 6)
-  star2.add(sphere, ring1, ring2, ring3)
+  star2.add(ring1, ring2, ring3)
   star2.scale.set(.2, .2, .2)
+  star2.position.set(12, 0.25, 0)
 }
 
 function createStar3() {
-  const sphere = makeSphere(2, '#000000')
-
   const ring = makeTorus(4, 0.02, '#000000')
   const satellite = makeSphere(0.5, '#000000', [0, 4, 0])
   ring.add(satellite)
@@ -173,8 +158,9 @@ function createStar3() {
   const satellite2 = makeSphere(0.3, '#000000', [0, 6, 0])
   ring2.add(satellite2)
 
-  star3.add(sphere, ring, ring2)
+  star3.add(ring, ring2)
   star3.scale.set(.2, .2, .2)
+  star3.position.set(12, 0.25, 0)
 }
 
 function makeRing(innerRadius: number, outerRadius: number) {
@@ -218,14 +204,14 @@ function makeDemiSphere(radius: number, color: string) {
 function next() {
   starState = { front: starState.right, left: starState.front, right: starState.left }
   setColor()
-  moveStars(starState, 'next')
+  moveStars(starState)
   setData(starState.front.name as StarName)
 }
 
 function previous() {
   starState = { front: starState.left, left: starState.right, right: starState.front }
   setColor()
-  moveStars(starState, 'prev')
+  moveStars(starState)
   setData(starState.front.name as StarName)
 }
 
@@ -262,17 +248,21 @@ function setColor() {
   }
 }
 
-function moveStars(group: starGroup, direction?: 'next' | 'prev') {
-  const leftright = direction === 'next' ? group.right : group.left
-  const tl: GSAPTimeline = gsap.timeline({ defaults: { duration: 0.4, ease: "power3.inOut" } })
-  tl.autoRemoveChildren = true
-
-  tl.to(group.front.position, { x: 12, y: 0, z: 0, }, 0)
-    .to(group.left.position, { x: 0, y: 0, z: 10, }, 0)
-    .to(group.right.position, { x: 0, y: 0, z: -10, }, 0)
-    .to(group.front, { visible: true, duration: 0 })
-    .to(leftright, { visible: false, duration: 0 }, '0.15')
-    .to(leftright, { visible: true, duration: 0 }, '0.3')
+function moveStars(group: starGroup) {
+  const tl: GSAPTimeline = gsap.timeline({ defaults: { duration: 0.3, ease: "power3.inOut" } })
+  tl.to([group.left.position, group.right.position, group.front.position], {
+    x: -30,
+    y: 0.25,
+    onComplete: () => {
+      scene.remove(group.left)
+      scene.remove(group.right)
+      scene.add(group.front)
+    }
+  })
+    .to([group.left.position, group.right.position, group.front.position], {
+      x: 12,
+      y: 0.25,
+    }, 0.15)
 }
 
 function updateCoords() {
@@ -283,16 +273,35 @@ function updateCoords() {
   );
 }
 
+function raycast() {
+  raycaster.setFromCamera(pointer, camera);
+  const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
+  if (!core) return
+  const intersects = raycaster.intersectObjects([core]);
+  intersects.forEach((_e: any) => {
+    console.debug("CORE ACTIVATED!!")
+  })
+}
+
+// ANIMATE
+function animate() {
+  renderer.render(scene, camera)
+  if (starState.front === star1) {
+    rotateStar1()
+  } else if (starState.front === star2) {
+    rotateStar2()
+  } else {
+    rotateStar3()
+  }
+  requestAnimationFrame(animate)
+}
+
 // INIT
+createCore()
 createStar1()
-star1.position.set(12, 0, 0)
-
 createStar2()
-star2.position.set(0, 0, 10)
-
 createStar3()
-star3.position.set(0, 0, -10)
+scene.add(star1)
 
-setupLights()
 animate()
 updateCoords()

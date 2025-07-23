@@ -12,16 +12,24 @@
 <body>
   <div id="app">
     <div class="ui">
-      <div class="background"></div>
-      <div class="dotside dotleft"></div>
-      <div class="dotside dotright"></div>
       <div class="data">
+        <div class="background"></div>
+        <div class="maininfo desktop">
+          <p>name_</p>
+          <p>SIMBAD_</p>
+          <p>system_</p>
+        </div>
         <div class="main">
           <p>Astra Nebula</p>
           <p>Globanthea-02C</p>
           <p>Canthora Twin Galaxy</p>
         </div>
 
+        <div class="typeinfo desktop">
+          <p>_distance</p>
+          <p>_type</p>
+          <p>_cell</p>
+        </div>
         <div class="nav">
           <div class="type">
             <p>215.003 UVs</p>
@@ -79,6 +87,10 @@
           </div>
         </div>
 
+        <!-- <div class="graphinfo desktop">
+          <p>Eccentricity</p>
+          <p>Ascension</p>
+        </div> -->
         <div class="graphs">
           <div class="bargraph">
             <div class="bar"></div>
@@ -103,12 +115,14 @@
             <p class="coord">0.0005966218808879</p>
             <p class="coord">1.2566554889121267</p>
           </div>
+          <div class="spectralinfo">
+            <p>Spectral coords.</p>
+          </div>
         </div>
-
-        <div class="controls">
-          <button id="previous"><span>&lt;</span> previous</button>
-          <button id="next">next <span>></span></button>
-        </div>
+      </div>
+      <div class="controls">
+        <button id="previous"><span>&lt;</span> previous</button>
+        <button id="next">next <span>></span></button>
       </div>
     </div>
   </div>

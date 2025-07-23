@@ -10,8 +10,7 @@ Three simple threeJS planets :)
 - add throttle to next/prev
 - clean topology CSS / HTML
 
-- one more with orbs like the ps2 logo !s
-- maybe hide bg stars
+- one more with orbs like the ps2 logo
 - animation on click (open?), rotation and controls
 
 - add another top right block right in the corner
