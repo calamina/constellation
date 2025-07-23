@@ -10,13 +10,15 @@ Three simple threeJS planets :)
 - add throttle to next/prev
 - clean topology CSS / HTML
 
+- one more with orbs like the ps2 logo !s
+- maybe hide bg stars
+- animation on click (open?), rotation and controls
+
 - add another top right block right in the corner
 - add a timer/clock w/ fake hours/date
 
 - add an svg / utf8 ?
 - add satellites / rings names/count
-
-- change background color :/ ?
 
 - clean css
 - clean ts
