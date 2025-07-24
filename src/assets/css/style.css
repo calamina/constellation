@@ -59,8 +59,8 @@ body {
 
 .data {
   position: relative;
-  height: 40rem;
-  width: 40rem;
+  height: 40vw;
+  width: 40vw;
   border: 1px solid #000000;
   border-top-right-radius: 0.5rem;
   transition: width 0.3s;
@@ -168,6 +168,7 @@ body {
   gap: 0rem;
   border: 1px solid #000000;
   border-top: none;
+  border-right: none;
 
   p {
     font-size: 0.9rem;
@@ -253,11 +254,9 @@ body {
 }
 
 .controls {
-  /* position: absolute; */
-  /* bottom: -3rem; */
   left: 0;
   right: 0;
-  width: 40rem;
+  width: 40vw;
   justify-content: center;
   justify-content: space-between;
   display: flex;

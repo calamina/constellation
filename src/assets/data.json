@@ -1,0 +1,29 @@
+{
+  "star1": {
+    "index": 1,
+    "name": "Astra Nebula",
+    "scientific": "Globanthea-02C",
+    "galaxy": "Canthora Twin Galaxy",
+    "distance": "215.003 UVs",
+    "type": "Gas Giant",
+    "inhab": "Non-inhabitable"
+  },
+  "star2": {
+    "index": 3,
+    "name": "Anantha ",
+    "scientific": "Socialedes-665-2",
+    "galaxy": "Pontelius Major",
+    "distance": "3.5e10 UVs",
+    "type": "Pulsar Planet",
+    "inhab": "Non-inhabitable"
+  },
+  "star3": {
+    "index": 2,
+    "name": "Pangùr Ban",
+    "scientific": "Erastreïdes-1X",
+    "galaxy": "Potar Nebulae",
+    "distance": "1.29e14 UVs",
+    "type": "Silicate Planet",
+    "inhab": "???"
+  }
+}

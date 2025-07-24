@@ -7,7 +7,7 @@ Three simple threeJS planets :)
 ![screen](/constellation.png?raw=true "constellation")
 
 # TODO
-- add throttle to next/prev
+- add color to star data to simplify setColor function
 - clean topology CSS / HTML
 
 - one more with orbs like the ps2 logo

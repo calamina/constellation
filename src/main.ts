@@ -1,5 +1,14 @@
 import * as THREE from "three"
 import { gsap } from "gsap";
+import data from './assets/data.json'
+
+
+const COLORS = {
+  black: "#000000",
+  red: '#ff000099',
+  green: '#00ff0055',
+  blue: '#0000ff77'
+}
 
 interface starGroup {
   front: THREE.Group<THREE.Object3DEventMap>;
@@ -8,36 +17,6 @@ interface starGroup {
 }
 
 type StarName = 'star1' | 'star2' | 'star3'
-
-const data = {
-  star1: {
-    index: 1,
-    name: "Astra Nebula",
-    scientific: "Globanthea-02C",
-    galaxy: "Canthora Twin Galaxy",
-    distance: "215.003 UVs",
-    type: "Gas Giant",
-    inhab: "Non-inhabitable",
-  },
-  star2: {
-    index: 3,
-    name: "Anantha ",
-    scientific: "Socialedes-665-2",
-    galaxy: "Pontelius Major",
-    distance: "3.5e10 UVs",
-    type: "Pulsar Planet",
-    inhab: "Non-inhabitable",
-  },
-  star3: {
-    index: 2,
-    name: "Pangùr Ban",
-    scientific: "Erastreïdes-1X",
-    galaxy: "Potar Nebulae",
-    distance: "1.29e14 UVs",
-    type: "Silicate Planet",
-    inhab: "???",
-  }
-}
 
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -53,12 +32,13 @@ const camera = new THREE.PerspectiveCamera(
 const raycaster = new THREE.Raycaster
 const pointer = new THREE.Vector2();
 
-camera.position.set(20, 0.25, 0)
+camera.position.set(5, 0, 0)
 camera.lookAt(0, 0, 0)
 raycaster.setFromCamera(pointer, camera);
 
 // SCENE
 const scene = new THREE.Scene()
+scene.position.y = 0.25
 
 // STARS
 const star1 = new THREE.Group()
@@ -67,8 +47,6 @@ const star2 = new THREE.Group()
 star2.name = "star2"
 const star3 = new THREE.Group()
 star3.name = "star3"
-const star4 = new THREE.Group()
-star4.name = "star4"
 let starState: starGroup = { front: star1, left: star2, right: star3 }
 
 // EVENTS
@@ -125,49 +103,41 @@ function onWindowResize() {
 }
 
 function createCore() {
-  const sphere = makeSphere(2, '#000000')
+  const sphere = makeSphere(0.24, COLORS.black)
   sphere.name = "core"
-  sphere.scale.set(.2, .2, .2)
-  sphere.position.set(12, 0.25, 0)
   sphere.material.transparent = true
   scene.add(sphere)
 }
 
 function createStar1() {
-  const outsideDemiSphere = makeDemiSphere(5, '#000000')
-  const ring = makeRing(4.5, 5)
+  const outsideDemiSphere = makeDemiSphere(0.8, COLORS.black)
+  const ring = makeRing(0.725, 0.8)
   star1.add(outsideDemiSphere, ring)
-  star1.scale.set(.2, .2, .2)
-  star1.position.set(12, 0.25, 0)
 }
 
 function createStar2() {
-  const ring1 = makeRing(2.5, 3)
-  const ring2 = makeRing(3.2, 4)
-  const ring3 = makeRing(4.2, 6)
+  const ring1 = makeRing(0.32, 0.4)
+  const ring2 = makeRing(0.45, 0.55)
+  const ring3 = makeRing(0.6, 0.8)
   star2.add(ring1, ring2, ring3)
-  star2.scale.set(.2, .2, .2)
-  star2.position.set(12, 0.25, 0)
 }
 
 function createStar3() {
-  const ring = makeTorus(4, 0.02, '#000000')
-  const satellite = makeSphere(0.5, '#000000', [0, 4, 0])
+  const ring = makeTorus(0.8, 0.002, COLORS.black)
+  const satellite = makeSphere(0.05, COLORS.black, [0, 0.8, 0])
   ring.add(satellite)
 
-  const ring2 = makeTorus(6, 0.02, '#000000')
-  const satellite2 = makeSphere(0.3, '#000000', [0, 6, 0])
+  const ring2 = makeTorus(0.6, 0.002, COLORS.black)
+  const satellite2 = makeSphere(0.075, COLORS.black, [0, 0.6, 0])
   ring2.add(satellite2)
 
   star3.add(ring, ring2)
-  star3.scale.set(.2, .2, .2)
-  star3.position.set(12, 0.25, 0)
 }
 
 function makeRing(innerRadius: number, outerRadius: number) {
   const ring = new THREE.Group()
   const geometry = new THREE.RingGeometry(innerRadius, outerRadius, 64, 64)
-  const material = new THREE.MeshLambertMaterial({ color: "#000000", side: THREE.DoubleSide })
+  const material = new THREE.MeshLambertMaterial({ color: COLORS.black, side: THREE.DoubleSide })
   material.transparent = true
   const mesh = new THREE.Mesh(geometry, material)
   ring.add(mesh)
@@ -189,18 +159,6 @@ function makeSphere(radius: number, color: string, position?: [number, number, n
   const sphereGeometry = new THREE.SphereGeometry(radius, 64, 64)
   const sphereMaterial = new THREE.MeshLambertMaterial({ color: color })
   const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial)
-  if (position) {
-    sphere.position.set(...position)
-  }
-  return sphere
-}
-
-function makeDotSphere(radius: number, color: string, position?: [number, number, number]) {
-  const sphereGeometry = new THREE.SphereGeometry(radius, 40, 40)
-  const particlesMaterial = new THREE.MeshLambertMaterial({ color: color })
-  particlesMaterial.transparent = true
-  particlesMaterial.opacity = 0.11
-  const sphere = new THREE.Mesh(sphereGeometry, particlesMaterial)
   if (position) {
     sphere.position.set(...position)
   }
@@ -254,11 +212,11 @@ function setData(star: StarName) {
 function setColor() {
   var r: HTMLElement | null = document.querySelector(':root');
   if (starState.front === star1) {
-    r?.style.setProperty('--color', '#ff000099');
+    r?.style.setProperty('--color', COLORS.red);
   } else if (starState.front === star2) {
-    r?.style.setProperty('--color', '#0000ff77');
+    r?.style.setProperty('--color', COLORS.blue);
   } else {
-    r?.style.setProperty('--color', '#00ff0055');
+    r?.style.setProperty('--color', COLORS.green);
   }
 }
 
@@ -266,25 +224,25 @@ function moveStars(group: starGroup) {
   const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
   core.material.opacity = 1
   const tl: GSAPTimeline = gsap.timeline({ defaults: { duration: 0.3, ease: "power3.inOut" } })
-  tl.to([group.left.position, group.right.position, group.front.position], {
-    x: -30,
-    y: 0.25,
+  tl.to(
+    [group.left.position, group.right.position, group.front.position], {
+    x: -30, y: 1.5,
     onComplete: () => {
       scene.remove(group.left)
       scene.remove(group.right)
       scene.add(group.front)
     }
   })
-    .to([group.left.position, group.right.position, group.front.position], {
-      x: 12,
-      y: 0.25,
-    }, 0.15)
+    .to(
+      [group.left.position, group.right.position, group.front.position],
+      { x: 0, y: 0 },
+      0.2)
 }
 
 function updateCoords() {
   const elements = document.querySelectorAll('.coord')
   setInterval(
-    () => elements?.forEach(e => e.innerHTML = (Math.random() * 999).toString()),
+    () => elements.forEach(e => e.innerHTML = (Math.random() * 999).toString()),
     1000
   );
 }
