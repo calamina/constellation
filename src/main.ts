@@ -129,6 +129,7 @@ function createCore() {
   sphere.name = "core"
   sphere.scale.set(.2, .2, .2)
   sphere.position.set(12, 0.25, 0)
+  sphere.material.transparent = true
   scene.add(sphere)
 }
 
@@ -167,6 +168,7 @@ function makeRing(innerRadius: number, outerRadius: number) {
   const ring = new THREE.Group()
   const geometry = new THREE.RingGeometry(innerRadius, outerRadius, 64, 64)
   const material = new THREE.MeshLambertMaterial({ color: "#000000", side: THREE.DoubleSide })
+  material.transparent = true
   const mesh = new THREE.Mesh(geometry, material)
   ring.add(mesh)
   ring.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2)
@@ -187,6 +189,18 @@ function makeSphere(radius: number, color: string, position?: [number, number, n
   const sphereGeometry = new THREE.SphereGeometry(radius, 64, 64)
   const sphereMaterial = new THREE.MeshLambertMaterial({ color: color })
   const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial)
+  if (position) {
+    sphere.position.set(...position)
+  }
+  return sphere
+}
+
+function makeDotSphere(radius: number, color: string, position?: [number, number, number]) {
+  const sphereGeometry = new THREE.SphereGeometry(radius, 40, 40)
+  const particlesMaterial = new THREE.MeshLambertMaterial({ color: color })
+  particlesMaterial.transparent = true
+  particlesMaterial.opacity = 0.11
+  const sphere = new THREE.Mesh(sphereGeometry, particlesMaterial)
   if (position) {
     sphere.position.set(...position)
   }
@@ -249,6 +263,8 @@ function setColor() {
 }
 
 function moveStars(group: starGroup) {
+  const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
+  core.material.opacity = 1
   const tl: GSAPTimeline = gsap.timeline({ defaults: { duration: 0.3, ease: "power3.inOut" } })
   tl.to([group.left.position, group.right.position, group.front.position], {
     x: -30,
@@ -276,17 +292,28 @@ function updateCoords() {
 function raycast() {
   raycaster.setFromCamera(pointer, camera);
   const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
-  if (!core) return
   const intersects = raycaster.intersectObjects([core]);
   intersects.forEach((_e: any) => {
-    console.debug("CORE ACTIVATED!!")
+    if (core.material.opacity === 0.11) {
+      core.material.opacity = 1
+      setColor()
+    } else {
+      core.material.opacity = 0.11
+      var r: HTMLElement | null = document.querySelector(':root');
+      r?.style.setProperty('--color', 'transparent');
+    }
   })
 }
 
 // ANIMATE
 function animate() {
   renderer.render(scene, camera)
-  if (starState.front === star1) {
+  const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
+  if (core.material.opacity === 0.11) {
+    starState.front.rotation.y -= 0.00075
+    starState.front.rotation.z -= 0.00075
+  }
+  else if (starState.front === star1) {
     rotateStar1()
   } else if (starState.front === star2) {
     rotateStar2()

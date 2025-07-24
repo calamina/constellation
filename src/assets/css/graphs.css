@@ -1,0 +1,107 @@
+/* .graphinfo {
+  position: absolute;
+  bottom: 2.5rem;
+  right: -11ch;
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+
+  p {
+    width: 14ch;
+    background-color: #00000011;
+    border: 1px solid #00000055;
+    border-left: none;
+    padding: 0 1ch;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    opacity: 0.5;
+    font-size: 0.8rem;
+  }
+} */
+
+.graphs {
+  position: absolute;
+  bottom: 2.5rem;
+  right: 1rem;
+  display: flex;
+  flex-flow: column;
+  align-items: end;
+  gap: 1rem;
+}
+
+.linegraph {
+  height: 2rem;
+  width: 4rem;
+  border: 1px solid #000000;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+
+  .line {
+    height: 1px;
+    width: 5rem;
+    background-color: #000000;
+    opacity: 0.3;
+    transform-origin: 50%;
+    animation: lineanim 1s infinite alternate-reverse ease-in-out;
+  }
+}
+
+.bargraph {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-evenly;
+  width: 6rem;
+  height: 2rem;
+  border: 1px solid #000000;
+
+  .bar {
+    height: 2.5rem;
+    width: 1px;
+    background-color: #000000;
+    opacity: 0.3;
+  }
+
+  .bar:nth-child(even) {
+    animation: baranim 1s infinite alternate-reverse ease-in-out;
+  }
+
+  .bar:nth-child(odd) {
+    animation: baranim 1s 0.3s infinite alternate-reverse ease-in-out;
+  }
+}
+
+/* ANIMATION */
+@keyframes baranim {
+  0% {
+    height: 0;
+  }
+
+  100% {
+    height: 3rem;
+  }
+}
+
+@keyframes lineanim {
+  0% {
+    transform: rotate(5deg);
+  }
+
+  25% {
+    transform: rotate(-7deg);
+  }
+
+  50% {
+    transform: rotate(3deg);
+  }
+
+  75% {
+    transform: rotate(-8deg);
+  }
+
+  100% {
+    transform: rotate(15deg);
+  }
+}

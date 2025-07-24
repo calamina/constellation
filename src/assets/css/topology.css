@@ -1,0 +1,178 @@
+.topology {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 1rem;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+  width: 8rem;
+  width: fit-content;
+  /* height: 4rem; */
+  border: 1px solid #000000;
+
+  &>div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &>div.topohidden {
+    display: none;
+  }
+}
+
+.topowrapper {
+  width: 100%;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 4rem;
+  height: 4rem;
+  transition: width 0.3s;
+
+  &:hover {
+    width: 8rem;
+  }
+}
+
+.topo1 {
+  border-right: 1px solid #000000;
+
+  .sphere {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 3rem;
+    height: 3rem;
+    border: 4px solid #00000033;
+    border-radius: 100%;
+  }
+
+  .out {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+.topo1side {
+  .sphere {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(2rem - 1px);
+    margin: 0 auto;
+    width: 3rem;
+    height: 1.5rem;
+    border-bottom-left-radius: 1.5rem;
+    border-bottom-right-radius: 1.5rem;
+    border: 4px solid #00000033;
+    border-top: 1px solid #00000033;
+  }
+}
+
+
+.topo2 {
+  border-right: 1px solid #000000;
+
+  .ring {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid #00000033;
+    border-radius: 100%;
+
+    &.out {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+}
+
+.topo3 {
+  border-right: 1px solid #000000;
+
+  .ring {
+    position: absolute;
+    left: 1px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 0.15rem solid #00000033;
+    border-radius: 100%;
+    box-sizing: content-box;
+
+    &.middle {
+      width: 1.9rem;
+      height: 1.9rem;
+      border: 0.2rem solid #00000033;
+    }
+
+    &.out {
+      width: 2.4rem;
+      height: 2.4rem;
+      border: 0.4rem solid #00000033;
+    }
+  }
+}
+
+.topoline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(2rem - 1px);
+  margin: 0 auto;
+  width: 1rem;
+  height: 1rem;
+  width: 3rem;
+  height: 1px;
+  background-color: #00000033;
+}
+
+.core {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 100%;
+  background-color: #000000;
+}
+
+
+.satellite {
+  position: absolute;
+  left: 0;
+  right: calc(2rem - 2px);
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #00000033;
+  border-radius: 100%;
+
+  &.out {
+    right: calc(3rem - 2px);
+    width: 0.3rem;
+    height: 0.3rem;
+  }
+}

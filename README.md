@@ -12,6 +12,7 @@ Three simple threeJS planets :)
 
 - one more with orbs like the ps2 logo
 - animation on click (open?), rotation and controls
+- separate elements on click ?
 
 - add another top right block right in the corner
 - add a timer/clock w/ fake hours/date
