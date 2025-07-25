@@ -49,8 +49,7 @@ star3.name = "star3"
 let starState: starGroup = { front: star1, left: star2, right: star3 }
 
 // EVENTS
-window.addEventListener('click', raycast);
-window.addEventListener('pointermove', onPointerMove);
+window.addEventListener('pointerdown', raycast);
 window.addEventListener("resize", onWindowResize)
 document.querySelector("#next")?.addEventListener("click", next)
 document.querySelector("#previous")?.addEventListener("click", previous)
@@ -87,11 +86,6 @@ function rotateStar3() {
   ring2.rotateX(- Math.sin(Date.now() / 4500) * 0.015)
   ring2.rotateY(- Math.sin(Date.now() / 3000) * 0.005)
   ring2.rotateZ(- Math.sin(Date.now() / 3500) * 0.02)
-}
-
-function onPointerMove(event: MouseEvent) {
-  pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-  pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
 }
 
 function onWindowResize() {
@@ -240,7 +234,9 @@ function updateCoords() {
   );
 }
 
-function raycast() {
+function raycast(e: MouseEvent) {
+  pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+  pointer.y = - (e.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
   const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
   const intersects = raycaster.intersectObjects([core]);
