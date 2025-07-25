@@ -10,122 +10,127 @@
 </head>
 
 <body>
-  <div id="app">
-    <div class="ui">
-      <div class="data">
-        <div class="background"></div>
-        <div class="maininfo desktop">
-          <p>name_</p>
-          <p>SIMBAD_</p>
-          <p>system_</p>
-        </div>
-        <div class="main">
-          <p>Astra Nebula</p>
-          <p>Globanthea-02C</p>
-          <p>Canthora Twin Galaxy</p>
-        </div>
-
-        <div class="typeinfo desktop">
-          <p>_distance</p>
-          <p>_type</p>
-          <p>_cell</p>
-        </div>
-        <div class="nav">
-          <div class="type">
-            <p>215.003 UVs</p>
-            <p>Gaz Giant</p>
-            <p>Non-inhabitable</p>
-          </div>
-          <div class="path">
-            <p>x</p>
-            <p>|</p>
-            <p>|</p>
-            <p>|</p>
-            <p>¤</p>
-            <p>|</p>
-            <p>|</p>
-            <p>#</p>
-          </div>
-        </div>
-        <div class="topology">
-          <div class="topowrapper">
-            <div class="topo topo1">
-              <div class="core"></div>
-              <div class="sphere"></div>
-            </div>
-            <div class="topo topo1side">
-              <div class="core"></div>
-              <div class="sphere"></div>
-            </div>
-          </div>
-          <div class="topowrapper topohidden">
-            <div class="topo topo2">
-              <div class="core"></div>
-              <div class="ring"></div>
-              <div class="ring out"></div>
-              <div class="satellite"></div>
-              <div class="satellite out"></div>
-            </div>
-            <div class="topo topo2side">
-              <div class="core"></div>
-              <div class="topoline"></div>
-              <div class="satellite"></div>
-              <div class="satellite out"></div>
-            </div>
-          </div>
-          <div class="topowrapper topohidden">
-            <div class="topo topo3">
-              <div class="core"></div>
-              <div class="ring"></div>
-              <div class="ring middle"></div>
-              <div class="ring out"></div>
-            </div>
-            <div class="topo topo3side">
-              <div class="core"></div>
-              <div class="topoline"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- <div class="graphinfo desktop">
-          <p>Eccentricity</p>
-          <p>Ascension</p>
-        </div> -->
-        <div class="graphs">
-          <div class="bargraph">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-          </div>
-          <div class="linegraph">
-            <div class="line"></div>
-          </div>
-        </div>
-
-        <div class="footer">
-          <div class="index">
-            <p><span id="index">1</span> of 3</p>
-            <span></span>
-          </div>
-          <div class="coords">
-            <p class="coord">0.0000000021585005</p>
-            <p class="coord">0.0005966218808879</p>
-            <p class="coord">1.2566554889121267</p>
-          </div>
-          <div class="spectralinfo desktop">
-            <p>Spectral coords.</p>
-          </div>
-        </div>
-      </div>
-      <div class="controls">
-        <button id="previous"><span>&lt;</span> previous</button>
-        <button id="next">next <span>></span></button>
-      </div>
+  <div class="loading">
+    <div class="amount">
+      <span class="loadpercent">0</span>
+      <span>%</span>
     </div>
   </div>
+  <div class="ui">
+    <div class="data">
+      <div class="background"></div>
+      <div class="maininfo desktop">
+        <p>name_</p>
+        <p>SIMBAD_</p>
+        <p>system_</p>
+      </div>
+      <div class="main">
+        <p>Astra Nebula</p>
+        <p>Globanthea-02C</p>
+        <p>Canthora Twin Galaxy</p>
+      </div>
+
+      <div class="typeinfo desktop">
+        <p>_distance</p>
+        <p>_type</p>
+        <p>_cell</p>
+      </div>
+      <div class="nav">
+        <div class="type">
+          <p>215.003 UVs</p>
+          <p>Gaz Giant</p>
+          <p>Non-inhabitable</p>
+        </div>
+        <div class="path">
+          <p>x</p>
+          <p>|</p>
+          <p>|</p>
+          <p>|</p>
+          <p>¤</p>
+          <p>|</p>
+          <p>|</p>
+          <p>#</p>
+        </div>
+      </div>
+      <div class="topology">
+        <div class="topowrapper">
+          <div class="topo topo1">
+            <div class="core"></div>
+            <div class="sphere"></div>
+          </div>
+          <div class="topo topo1side">
+            <div class="core"></div>
+            <div class="sphere"></div>
+          </div>
+        </div>
+        <div class="topowrapper topohidden">
+          <div class="topo topo2">
+            <div class="core"></div>
+            <div class="ring"></div>
+            <div class="ring out"></div>
+            <div class="satellite"></div>
+            <div class="satellite out"></div>
+          </div>
+          <div class="topo topo2side">
+            <div class="core"></div>
+            <div class="topoline"></div>
+            <div class="satellite"></div>
+            <div class="satellite out"></div>
+          </div>
+        </div>
+        <div class="topowrapper topohidden">
+          <div class="topo topo3">
+            <div class="core"></div>
+            <div class="ring"></div>
+            <div class="ring middle"></div>
+            <div class="ring out"></div>
+          </div>
+          <div class="topo topo3side">
+            <div class="core"></div>
+            <div class="topoline"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="graphinfo desktop">
+        <p>Eccentricity</p>
+        <p>Ascension</p>
+      </div> -->
+      <div class="graphs">
+        <div class="bargraph">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+        <div class="linegraph">
+          <div class="line"></div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="index">
+          <p><span id="index">1</span> of 3</p>
+          <span></span>
+        </div>
+        <div class="coords">
+          <p class="coord">0.0000000021585005</p>
+          <p class="coord">0.0005966218808879</p>
+          <p class="coord">1.2566554889121267</p>
+        </div>
+        <div class="spectralinfo desktop">
+          <p>Spectral coords.</p>
+        </div>
+      </div>
+    </div>
+    <div class="controls">
+      <button id="previous"><span>&lt;</span> previous</button>
+      <button id="next">next <span>></span></button>
+    </div>
+  </div>
+  <div class="vx"></div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 

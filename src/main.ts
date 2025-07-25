@@ -1,6 +1,8 @@
 import * as THREE from "three"
 import { gsap } from "gsap";
+import ScrambleTextPlugin from "gsap/ScrambleTextPlugin";
 import data from './assets/data.json'
+gsap.registerPlugin(ScrambleTextPlugin)
 
 const COLORS = { black: "#000000" }
 
@@ -22,7 +24,8 @@ const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setPixelRatio(window.devicePixelRatio)
 renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setClearColor(0x000000, 0)
-document.body.appendChild(renderer.domElement)
+const vx = document.querySelector(".vx")
+vx?.appendChild(renderer.domElement)
 
 // CAMERA & RAYCASTER
 const camera = new THREE.PerspectiveCamera(
@@ -187,14 +190,15 @@ function setData(star: StarName) {
   const [distance, type, inhab] = infoElements
   const index = document.querySelector('#index')
 
-  if (index) index.innerHTML = active.index.toString()
+  const tl = gsap.timeline({ defaults: { duration: 0.3, scrambleText: { text: "", tweenLength: false, chars: "lowerCase" } } })
 
-  name.innerHTML = active.name
-  scientific.innerHTML = active.scientific
-  galaxy.innerHTML = active.galaxy
-  distance.innerHTML = active.distance
-  type.innerHTML = active.type
-  inhab.innerHTML = active.inhab
+  tl.to(name, { scrambleText: { text: active.name, }, }, 0)
+  tl.to(scientific, { scrambleText: { text: active.scientific, }, }, 0)
+  tl.to(galaxy, { scrambleText: { text: active.galaxy, }, }, 0)
+  tl.to(distance, { scrambleText: { text: active.distance, }, }, 0)
+  tl.to(type, { scrambleText: { text: active.type, }, }, 0)
+  tl.to(inhab, { scrambleText: { text: active.inhab, }, }, 0)
+  tl.to(index, { scrambleText: { text: active.index.toString(), chars: "0123456798" }, }, 0)
 
   const topos = Array.from(document.querySelector('.topology')?.children ?? [])
   topos.forEach(el => el.classList.add('topohidden'))
@@ -275,7 +279,73 @@ function animate() {
   }
 }
 
+function fade() {
+  const ui = document.querySelector('.data')
+  const vx = document.querySelector('.vx')
+  const ctrl = document.querySelector('.controls')
+  const load = document.querySelector('.loading')
+  const num = document.querySelector('.loadpercent')
+  const tl = gsap.timeline({ defaults: { duration: .3 } });
+
+  tl
+    .set(ui, {
+      scaleY: 0,
+    })
+    .set(vx, {
+      scale: 0.8,
+      translateY: '1rem',
+      opacity: 0
+    })
+    .set(ctrl, {
+      scaleY: 0,
+      opacity: 0
+    })
+    .set("p", {
+      opacity: 0
+    })
+
+  tl
+    .to(document.body, { autoAlpha: 1, })
+    .to(load, {
+      width: "40vw",
+      duration: 0.8,
+      delay: 0.2,
+      ease: "power1.out"
+    })
+    .to(num, {
+      textContent: 100,
+      snap: { textContent: 1 },
+      duration: 0.8,
+      ease: "power1.out"
+    }, "<")
+    .to(load, {
+      autoAlpha: 0,
+      duration: 0
+    })
+    .to(ui, {
+      scaleY: 1,
+      duration: 0.7,
+      ease: "power2.out"
+    })
+    .to(ctrl, {
+      scaleY: 1,
+      opacity: 1
+    }, "< 0.25")
+    .to(vx, {
+      scale: 1,
+      translateY: 0,
+      opacity: 1,
+      delay: 0.05,
+      duration: 0.6,
+      ease: "power3.out"
+    }, "< 0.1")
+    .to("p", {
+      opacity: 1
+    }, "< -0.1")
+}
+
 // INIT
+fade()
 createCore()
 createStar1()
 createStar2()

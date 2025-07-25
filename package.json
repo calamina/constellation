@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@types/three": "^0.163.0",
-    "gsap": "^3.12.7",
+    "gsap": "^3.13.0",
     "three": "^0.164.1"
   }
 }
