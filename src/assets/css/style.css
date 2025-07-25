@@ -257,7 +257,6 @@ body {
   left: 0;
   right: 0;
   width: 40vw;
-  justify-content: center;
   justify-content: space-between;
   display: flex;
   transition: width 0.3s;

@@ -2,13 +2,7 @@ import * as THREE from "three"
 import { gsap } from "gsap";
 import data from './assets/data.json'
 
-
-const COLORS = {
-  black: "#000000",
-  red: '#ff000099',
-  green: '#00ff0055',
-  blue: '#0000ff77'
-}
+const COLORS = { black: "#000000" }
 
 interface starGroup {
   front: THREE.Group<THREE.Object3DEventMap>;
@@ -18,16 +12,21 @@ interface starGroup {
 
 type StarName = 'star1' | 'star2' | 'star3'
 
+// FPS
+let clock = new THREE.Clock();
+let delta = 0;
+let interval = 1 / 120;
+
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setPixelRatio(window.devicePixelRatio)
 renderer.setSize(window.innerWidth, window.innerHeight)
-renderer.setClearColor(0xffffff, 0)
+renderer.setClearColor(0x000000, 0)
 document.body.appendChild(renderer.domElement)
 
 // CAMERA & RAYCASTER
 const camera = new THREE.PerspectiveCamera(
-  45, window.innerWidth / window.innerHeight
+  50, window.innerWidth / window.innerHeight
 )
 const raycaster = new THREE.Raycaster
 const pointer = new THREE.Vector2();
@@ -55,7 +54,6 @@ window.addEventListener('pointermove', onPointerMove);
 window.addEventListener("resize", onWindowResize)
 document.querySelector("#next")?.addEventListener("click", next)
 document.querySelector("#previous")?.addEventListener("click", previous)
-
 
 function rotateStar1() {
   star1.rotateX(Math.sin(Date.now() / 3000) * 0.005)
@@ -210,14 +208,9 @@ function setData(star: StarName) {
 }
 
 function setColor() {
-  var r: HTMLElement | null = document.querySelector(':root');
-  if (starState.front === star1) {
-    r?.style.setProperty('--color', COLORS.red);
-  } else if (starState.front === star2) {
-    r?.style.setProperty('--color', COLORS.blue);
-  } else {
-    r?.style.setProperty('--color', COLORS.green);
-  }
+  const r: HTMLElement | null = document.querySelector(':root');
+  const starname = starState.front.name as StarName
+  r?.style.setProperty('--color', data[starname].color);
 }
 
 function moveStars(group: starGroup) {
@@ -265,7 +258,6 @@ function raycast() {
 
 // ANIMATE
 function animate() {
-  renderer.render(scene, camera)
   const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
   if (core.material.opacity === 0.11) {
     starState.front.rotation.y -= 0.00075
@@ -278,7 +270,13 @@ function animate() {
   } else {
     rotateStar3()
   }
+
   requestAnimationFrame(animate)
+  delta += clock.getDelta();
+  if (delta > interval) {
+    renderer.render(scene, camera)
+    delta = delta % interval;
+  }
 }
 
 // INIT
