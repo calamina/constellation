@@ -234,9 +234,18 @@ function moveStars(group: starGroup) {
 function updateCoords() {
   const elements = document.querySelectorAll('.coord')
   setInterval(
-    () => elements.forEach(e => e.innerHTML = (Math.random() * 999).toString()),
-    1000
-  );
+    () => {
+      elements.forEach(e => {
+        const num = (Math.random() * 999).toString();
+        gsap.to(e, {
+          scrambleText: { text: num, chars: "0123456798" },
+          duration: 0.5
+        })
+      })
+    },
+    // e.innerHTML = (Math.random() * 999).toString()),
+    1500
+  )
 }
 
 function raycast(e: MouseEvent) {
