@@ -320,7 +320,7 @@ button {
 
   .data {
     width: 95vw;
-    height: calc(100vh - 7rem);
+    height: 80vh;
   }
 
   .desktop {
