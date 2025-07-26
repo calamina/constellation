@@ -5,6 +5,7 @@ import data from './assets/data.json'
 gsap.registerPlugin(ScrambleTextPlugin)
 
 const COLORS = { black: "#000000" }
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 interface starGroup {
   front: THREE.Group<THREE.Object3DEventMap>;
@@ -307,7 +308,7 @@ function fade() {
   tl
     .to(document.body, { autoAlpha: 1, })
     .to(load, {
-      width: "40vw",
+      width: isMobile ? "95vw" : "40vw",
       duration: 0.8,
       delay: 0.2,
       ease: "power1.out"
