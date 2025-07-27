@@ -171,15 +171,17 @@ function makeDemiSphere(radius: number, color: string) {
 
 function next() {
   starState = { front: starState.right, left: starState.front, right: starState.left }
-  setColor()
-  moveStars(starState)
-  setData(starState.front.name as StarName)
+  updateStars("next")
 }
 
 function previous() {
   starState = { front: starState.left, left: starState.right, right: starState.front }
+  updateStars("prev")
+}
+
+function updateStars(direction: "prev" | "next") {
+  moveStars(direction)
   setColor()
-  moveStars(starState)
   setData(starState.front.name as StarName)
 }
 
@@ -193,13 +195,13 @@ function setData(star: StarName) {
 
   const tl = gsap.timeline({ defaults: { duration: 0.3, scrambleText: { text: "", tweenLength: false, chars: "lowerCase" } } })
 
+  tl.call(() => { index!.innerHTML = active.index.toString() })
   tl.to(name, { scrambleText: { text: active.name, }, }, 0)
   tl.to(scientific, { scrambleText: { text: active.scientific, }, }, 0)
   tl.to(galaxy, { scrambleText: { text: active.galaxy, }, }, 0)
   tl.to(distance, { scrambleText: { text: active.distance, }, }, 0)
   tl.to(type, { scrambleText: { text: active.type, }, }, 0)
   tl.to(inhab, { scrambleText: { text: active.inhab, }, }, 0)
-  tl.to(index, { scrambleText: { text: active.index.toString(), chars: "0123456798" }, }, 0)
 
   const topos = Array.from(document.querySelector('.topology')?.children ?? [])
   topos.forEach(el => el.classList.add('topohidden'))
@@ -212,38 +214,51 @@ function setColor() {
   r?.style.setProperty('--color', data[starname].color);
 }
 
-function moveStars(group: starGroup) {
+function moveStars(direction: "prev" | "next") {
+  const index = document.querySelector('.index')
   const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
+
   core.material.opacity = 1
-  const tl: GSAPTimeline = gsap.timeline({ defaults: { duration: 0.3, ease: "power3.inOut" } })
-  tl.to(
-    [group.left.position, group.right.position, group.front.position], {
-    x: -30, y: 1.5,
-    onComplete: () => {
-      scene.remove(group.left)
-      scene.remove(group.right)
-      scene.add(group.front)
-    }
-  })
+  const tl: GSAPTimeline = gsap.timeline({ defaults: { duration: 0.25, ease: "power3.inOut" } })
+  tl
+    .to(index, {
+      translateX: direction === "prev" ? "1rem" : "-1rem",
+      ease: "power3.out",
+      duration: 0.35
+    })
+    .to(index, {
+      translateX: 0,
+      ease: "back.out",
+    })
     .to(
-      [group.left.position, group.right.position, group.front.position],
+      [starState.left.position, starState.right.position, starState.front.position], {
+      x: -30, y: 1.5,
+      onComplete: () => {
+        scene.remove(starState.left)
+        scene.remove(starState.right)
+        scene.add(starState.front)
+      }
+    }, 0)
+    .to(
+      [starState.left.position, starState.right.position, starState.front.position],
       { x: 0, y: 0 },
-      0.2)
+      0.25)
 }
 
 function updateCoords() {
   const elements = document.querySelectorAll('.coord')
   setInterval(
     () => {
-      elements.forEach(e => {
-        const num = (Math.random() * 999).toString();
+      elements.forEach(e =>
         gsap.to(e, {
-          scrambleText: { text: num, chars: "0123456798" },
+          scrambleText: {
+            text: (Math.random() * 999).toString(),
+            chars: "0123456798",
+            revealDelay: 0.2
+          },
           duration: 0.5
-        })
-      })
+        }))
     },
-    // e.innerHTML = (Math.random() * 999).toString()),
     1500
   )
 }
