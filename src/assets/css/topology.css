@@ -33,11 +33,6 @@
   position: relative;
   width: 4rem;
   height: 4rem;
-  transition: width 0.3s;
-
-  &:hover {
-    width: 8rem;
-  }
 }
 
 .topo1 {

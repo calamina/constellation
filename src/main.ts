@@ -246,18 +246,23 @@ function moveStars(direction: "prev" | "next") {
 }
 
 function updateCoords() {
+  const timedate = document.querySelector(".timedate")
   const elements = document.querySelectorAll('.coord')
+  const coords = ['ϰ', 'λ', 'ϟ']
   setInterval(
     () => {
-      elements.forEach(e =>
+      elements.forEach((e, index) =>
         gsap.to(e, {
           scrambleText: {
-            text: (Math.random() * 999).toString(),
+            text: coords[index] + "_" + (Math.random() * 999).toString(),
             chars: "0123456798",
             revealDelay: 0.2
           },
           duration: 0.5
         }))
+      const date = new Date(Date.now() + 32123456789099)
+      const formated = `α:_ 0εx${date.getSeconds()}`
+      timedate!.innerHTML = formated
     },
     1500
   )
