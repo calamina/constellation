@@ -1,7 +1,7 @@
 .topology {
   position: absolute;
-  bottom: 2.5rem;
-  left: 1rem;
+  bottom: 2.25rem;
+  left: 0.75rem;
   display: flex;
   flex-flow: column;
   align-items: center;
@@ -9,7 +9,7 @@
   width: 8rem;
   width: fit-content;
   /* height: 4rem; */
-  border: 1px solid #000000;
+  border: var(--border);
 
   &>div {
     display: flex;
@@ -36,7 +36,7 @@
 }
 
 .topo1 {
-  border-right: 1px solid #000000;
+  border-right: var(--border);
 
   .sphere {
     position: absolute;
@@ -75,7 +75,7 @@
 
 
 .topo2 {
-  border-right: 1px solid #000000;
+  border-right: var(--border);
 
   .ring {
     position: absolute;
@@ -97,7 +97,7 @@
 }
 
 .topo3 {
-  border-right: 1px solid #000000;
+  border-right: var(--border);
 
   .ring {
     position: absolute;

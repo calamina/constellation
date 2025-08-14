@@ -212,6 +212,16 @@ function setColor() {
   const r: HTMLElement | null = document.querySelector(':root');
   const starname = starState.front.name as StarName
   r?.style.setProperty('--color', data[starname].color);
+
+  // test border
+  // if (starState.front === star2) {
+  //   r?.style.setProperty('--border', '1px solid #00000055');
+  //   r?.style.setProperty('--border-info', '1px solid #00000033');
+  // }
+  // else {
+  //   r?.style.setProperty('--border', '1px solid #000');
+  //   r?.style.setProperty('--border-info', '1px solid #00000055');
+  // }
 }
 
 function moveStars(direction: "prev" | "next") {

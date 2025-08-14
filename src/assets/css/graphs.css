@@ -1,17 +1,17 @@
 .graphs {
   position: absolute;
-  bottom: 2.5rem;
-  right: 1rem;
+  bottom: 2.25rem;
+  right: 0.75rem;
   display: flex;
   flex-flow: column;
   align-items: end;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .linegraph {
   height: 2rem;
   width: 4rem;
-  border: 1px solid #000000;
+  border: var(--border);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -32,7 +32,7 @@
   justify-content: space-evenly;
   width: 6rem;
   height: 2rem;
-  border: 1px solid #000000;
+  border: var(--border);
 
   .bar {
     height: 2.5rem;

@@ -8,7 +8,9 @@
 }
 
 :root {
-  --color: #ff000099
+  --color: #ff000099;
+  --border: 1px solid #000;
+  --border-info: 1px solid #00000055;
 }
 
 * {
@@ -87,7 +89,7 @@ body {
   position: relative;
   height: 40vw;
   width: 40vw;
-  border: 1px solid #000000;
+  border: var(--border);
   border-top-right-radius: 0.5rem;
   transition: width 0.3s;
 }
@@ -135,6 +137,55 @@ body {
   }
 }
 
+.specs {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: -3.75rem;
+  display: flex;
+  flex-flow: column;
+  gap: 0.5rem;
+
+  div {
+    display: flex;
+    align-items: center;
+  }
+
+  p {
+    margin: 0;
+    padding: 0.15rem 0.4rem;
+    border: var(--border);
+    flex-shrink: 0;
+
+  }
+
+  .infospec {
+    width: 3rem;
+    border: var(--border-info);
+    background-color: #00000011;
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+  }
+
+  p:not(.infospec) {
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+
+  .horisep {
+    display: block;
+    height: 1px;
+    width: 0.75rem;
+    background-color: #000;
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+
+  .infosep {
+    background-color: #00000055;
+  }
+}
+
 .nav {
   display: flex;
   flex-flow: column;
@@ -155,7 +206,7 @@ body {
   gap: 0.5rem;
   right: -10ch;
   width: 10ch;
-  border: 1px solid #00000055;
+  border: var(--border-info);
   border-left: none;
   background-color: #00000011;
 
@@ -175,7 +226,7 @@ body {
   padding: 0.25rem;
   gap: 0.5rem;
   width: 15ch;
-  border: 1px solid #000000;
+  border: var(--border);
   border-right: none;
 
   p {
@@ -187,7 +238,7 @@ body {
 }
 
 .timewrap {
-  border: 1px solid #000000;
+  border: var(--border);
   border-top: none;
   border-right: none;
   padding: 0.25rem 0.5rem;
@@ -209,9 +260,11 @@ body {
   align-items: center;
   justify-content: center;
   margin: 0;
-  border: 1px solid #000000;
+  border: var(--border);
   margin-top: 0.5rem;
   margin-right: 0.5rem;
+  margin-top: 0.75rem;
+  margin-right: 0.75rem;
   width: 3rem;
   height: 3rem;
   overflow: hidden;
@@ -243,6 +296,30 @@ body {
   }
 }
 
+.radar {
+  position: absolute;
+  border: var(--border-info);
+  border-radius: 100%;
+
+  &.radar1 {
+    width: 25%;
+    height: 25%;
+    animation: pulse 1.5s infinite alternate;
+  }
+
+  &.radar2 {
+    width: 50%;
+    height: 50%;
+    animation: pulse 1.5s 0.2s infinite alternate;
+  }
+
+  &.radar3 {
+    width: 75%;
+    height: 75%;
+    animation: pulse 1.5s 0.4s infinite alternate;
+  }
+}
+
 .footer {
   position: absolute;
   bottom: 0;
@@ -250,13 +327,14 @@ body {
 }
 
 .coords {
-  border-top: 1px solid #000000;
+  border-top: var(--border);
   display: flex;
   justify-content: space-between;
   padding: 0.25rem;
   box-sizing: border-box;
   overflow: hidden;
   gap: 1rem;
+  height: 1.5rem;
 
   p {
     margin: 0;
@@ -277,18 +355,21 @@ body {
 
   p {
     width: fit-content;
-    border: 1px solid #000000;
+    border: var(--border);
     display: flex;
     justify-content: space-between;
-    padding: 0.25rem 0.5rem;
+    padding: 0.25rem 0.75rem;
     margin: 0;
+    border-bottom-right-radius: 0.5rem;
+    border-top-left-radius: 0.5rem;
   }
 
   span:not(#index) {
     display: block;
-    width: 1px;
+    /* width: 1px; */
     height: 1rem;
-    background-color: #000000;
+    border-left: var(--border);
+    /* background-color: #000000; */
   }
 
   #index {
@@ -300,7 +381,7 @@ body {
   display: flex;
   align-items: center;
   background-color: #00000011;
-  border: 1px solid #00000055;
+  border: var(--border-info);
   position: absolute;
   height: 2rem;
   bottom: -2rem;
@@ -336,12 +417,12 @@ button {
   cursor: pointer;
   background-color: var(--color);
   border: none;
-  border: 1px solid #000000;
+  border: var(--border);
   font-size: 1rem;
   transition: background-color 0.3s, padding 0.2s;
 
   &:hover {
-    padding: 0.5rem 3rem;
+    padding: 0.5rem 2rem;
   }
 
   & span {
@@ -373,5 +454,17 @@ button {
 
   100% {
     transform: rotate3d(1, 1.6, 5, 360deg);
+  }
+}
+
+@keyframes pulse {
+  35% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.1);
+    opacity: 0;
   }
 }
