@@ -57,6 +57,14 @@ window.addEventListener('pointerdown', raycast);
 window.addEventListener("resize", onWindowResize)
 document.querySelector("#next")?.addEventListener("click", next)
 document.querySelector("#previous")?.addEventListener("click", previous)
+document.addEventListener('keydown', (event) => {
+  switch (event.key) {
+    case "ArrowLeft":
+      return previous()
+    case "ArrowRight":
+      return next()
+  }
+});
 
 function rotateStar1() {
   star1.rotateX(Math.sin(Date.now() / 3000) * 0.005)
@@ -192,6 +200,7 @@ function setData(star: StarName) {
   const [name, scientific, galaxy] = titleElements
   const [distance, type, inhab] = infoElements
   const index = document.querySelector('#index')
+  const units = document.querySelectorAll('.unit') ?? []
 
   const tl = gsap.timeline({ defaults: { duration: 0.3, scrambleText: { text: "", tweenLength: false, chars: "lowerCase" } } })
 
@@ -202,7 +211,9 @@ function setData(star: StarName) {
   tl.to(distance, { scrambleText: { text: active.distance, }, }, 0)
   tl.to(type, { scrambleText: { text: active.type, }, }, 0)
   tl.to(inhab, { scrambleText: { text: active.inhab, }, }, 0)
-
+  units.forEach((_unit, index) =>
+    tl.to(units[index], { scrambleText: { text: '_:0' + active.units[index].toString(), }, }, 0)
+  )
   const topos = Array.from(document.querySelector('.topology')?.children ?? [])
   topos.forEach(el => el.classList.add('topohidden'))
   topos[active.index - 1].classList.remove('topohidden')
@@ -226,6 +237,7 @@ function setColor() {
 
 function moveStars(direction: "prev" | "next") {
   const index = document.querySelector('.index')
+  const symbol = document.querySelector('.symbol')
   const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
 
   core.material.opacity = 1
@@ -239,7 +251,17 @@ function moveStars(direction: "prev" | "next") {
     .to(index, {
       translateX: 0,
       ease: "back.out",
-    })
+    }, 0.35)
+    .to(symbol, {
+      marginTop: direction === "next" ? "1.5rem" : "-1.5rem",
+      ease: "power3.out",
+      duration: 0.35
+    }, 0)
+    .to(symbol, {
+      // marginTop: "1.5rem",
+      marginTop: "0",
+      ease: "back.out",
+    }, 0.35)
     .to(
       [starState.left.position, starState.right.position, starState.front.position], {
       x: -30, y: 1.5,
