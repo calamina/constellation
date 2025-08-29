@@ -50,6 +50,48 @@
   }
 }
 
+.graphinfo {
+  position: absolute;
+  display: flex;
+  bottom: 2.25rem;
+  right: -2.75rem;
+  gap: 0;
+
+  .graphgraph {
+    height: 4.75rem;
+    width: 2rem;
+    direction: rtl;
+    border: var(--border-info);
+    background-color: #00000011;
+    display: grid;
+    place-items: center;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+
+    p {
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+      padding-right: 0.1rem;
+      letter-spacing: -4px;
+      font-size: 0.9rem;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      color: #00000077;
+    }
+  }
+
+  .graphlinks {
+    display: flex;
+    flex-flow: column;
+    height: 4.75rem;
+    width: 0.75rem;
+    align-items: center;
+    justify-content: space-around;
+    gap: 1rem;
+  }
+}
+
 /* ANIMATION */
 @keyframes baranim {
   0% {

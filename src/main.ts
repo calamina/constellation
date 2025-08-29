@@ -432,6 +432,19 @@ function fade() {
     }, "< -0.1")
 }
 
+function updateGraphData() {
+  const data = document.querySelector('.graphdata')
+  const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.15 })
+  tl.to(data, {
+    scrambleText: {
+      text: "⠥⠏⠺⠁⠗⠙⠎",
+      chars: "⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠭⠽⠵",
+      revealDelay: 1
+    },
+    duration: 2,
+  }, 0)
+}
+
 // INIT
 fade()
 createCore()
@@ -442,3 +455,4 @@ scene.add(star1)
 
 animate()
 updateCoords()
+updateGraphData()

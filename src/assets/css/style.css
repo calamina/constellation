@@ -238,18 +238,20 @@ body {
     border-bottom-right-radius: 0.5rem;
   }
 
-  .horisep {
-    display: block;
-    height: 1px;
-    width: 0.75rem;
-    background-color: #000;
-    flex-shrink: 0;
-    flex-grow: 0;
-  }
 
-  .infosep {
-    background-color: #00000055;
-  }
+}
+
+.horisep {
+  display: block;
+  height: 1px;
+  width: 0.75rem;
+  background-color: #000;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.infosep {
+  background-color: #00000055;
 }
 
 .nav {
