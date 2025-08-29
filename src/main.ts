@@ -54,6 +54,7 @@ let starState: starGroup = { front: star1, left: star2, right: star3 }
 
 // EVENTS
 window.addEventListener('pointerdown', raycast);
+window.addEventListener('pointermove', raycastinfo);
 window.addEventListener("resize", onWindowResize)
 document.querySelector("#next")?.addEventListener("click", next)
 document.querySelector("#previous")?.addEventListener("click", previous)
@@ -223,6 +224,7 @@ function setColor() {
   const r: HTMLElement | null = document.querySelector(':root');
   const starname = starState.front.name as StarName
   r?.style.setProperty('--color', data[starname].color);
+  r?.style.setProperty('--hue', data[starname].hue + "deg");
 
   // test border
   // if (starState.front === star2) {
@@ -318,6 +320,23 @@ function raycast(e: MouseEvent) {
   })
 }
 
+function raycastinfo(e: MouseEvent) {
+  pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+  pointer.y = - (e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
+  const focus: HTMLElement | null = document.querySelector('.coreFocus')
+  const intersects = raycaster.intersectObjects([core]);
+  intersects.forEach((_e: any) => {
+    document.querySelector('body')!.style.cursor = "pointer"
+    focus!.style.opacity = '1';
+  })
+  if (!intersects || intersects.length === 0) {
+    document.querySelector('body')!.style.cursor = "default"
+    focus!.style.opacity = '0';
+  }
+}
+
 // ANIMATE
 function animate() {
   const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
@@ -347,6 +366,7 @@ function fade() {
   const ctrl = document.querySelector('.controls')
   const load = document.querySelector('.loading')
   const num = document.querySelector('.loadpercent')
+  const focus = document.querySelector('.coreFocus')
   const tl = gsap.timeline({ defaults: { duration: .3 } });
 
   tl
@@ -362,8 +382,11 @@ function fade() {
       scaleY: 0,
       opacity: 0
     })
-    .set("p", {
+    .set(["p", ".horisep"], {
       opacity: 0
+    })
+    .set(focus, {
+      display: "none"
     })
 
   tl
@@ -401,8 +424,11 @@ function fade() {
       duration: 0.6,
       ease: "power3.out"
     }, "< 0.1")
-    .to("p", {
+    .to(["p", ".horisep"], {
       opacity: 1
+    }, "< -0.1")
+    .to(focus, {
+      display: "grid"
     }, "< -0.1")
 }
 

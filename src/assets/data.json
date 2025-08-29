@@ -1,7 +1,8 @@
 {
   "star1": {
     "index": 1,
-    "color": "#ff000099",
+    "color": "oklch(60% 0.25 30 / 0.6)",
+    "hue": "180",
     "name": "Astra Nebula",
     "scientific": "Globanthea-02C",
     "galaxy": "Canthora Twin Galaxy",
@@ -12,7 +13,8 @@
   },
   "star2": {
     "index": 3,
-    "color": "#0000ff77",
+    "color": "oklch(60% 0.25 280 / 0.6)",
+    "hue": "140",
     "name": "Anantha ",
     "scientific": "Socialedes-665-2",
     "galaxy": "Pontelius Major",
@@ -23,7 +25,8 @@
   },
   "star3": {
     "index": 2,
-    "color" : "#00ff0055",
+    "color" : "oklch(60% 0.25 170 / 0.6)",
+    "hue": "160",
     "name": "Pangùr Ban",
     "scientific": "Erastreïdes-1X",
     "galaxy": "Potar Nebulae",

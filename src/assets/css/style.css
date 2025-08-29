@@ -8,7 +8,8 @@
 }
 
 :root {
-  --color: #ff000099;
+  --color: oklch(60% 0.25 30 / 0.6);
+  --hue: 180deg;
   --border: 1px solid #000;
   --border-info: 1px solid #00000055;
 }
@@ -472,6 +473,61 @@ body {
   display: flex;
   transition: width 0.3s;
   transform-origin: 0% 0%;
+}
+
+.coreFocus {
+  opacity: 0;
+  position: absolute;
+  top: 44.65%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  border: 1px solid #ffffff;
+  border: 1px solid #000;
+  width: 11vw;
+  height: 11vw;
+  transition: opacity 0.2s;
+  backdrop-filter: hue-rotate(var(--hue));
+  /* backdrop-filter: hue-rotate(110deg); */
+  background-color: #fedfed77;
+  border-top-right-radius: 1rem;
+  display: grid;
+  place-items: center;
+
+  .text {
+    /* color: #fff; */
+    z-index: 9999;
+    position: absolute;
+    width: fit-content;
+    padding: 0.25rem 0.5rem;
+    margin: 0;
+  }
+
+  .textFocus {
+    font-size: 0.65rem;
+    bottom: 0;
+    right: 0;
+  }
+
+  .symbolFocus {
+    font-size: 0.9rem;
+    top: 0;
+    left: 0;
+  }
+
+  .processFocus {
+    font-size: 0.9rem;
+    top: 0;
+    right: 0;
+  }
+
+  .coreLine {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background-color: #000;
+    animation: pulse 1s infinite alternate-reverse;
+  }
 }
 
 button {
