@@ -51,7 +51,7 @@ const scene = new THREE.Scene()
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.update();
 controls.enablePan = false
-controls.enableZoom = false
+// controls.enableZoom = false
 
 // STARS
 const star1 = new THREE.Group()
@@ -114,7 +114,8 @@ function rotateStar3() {
 function onWindowResize() {
   dataWidth = document.querySelector(".data")?.getBoundingClientRect().width ?? 0
   dataHeight = document.querySelector(".data")?.getBoundingClientRect().height ?? 0
-  renderer.setSize(dataWidth, dataHeight - 2, true)
+  renderer.setSize(dataWidth, dataHeight - 2)
+  renderer.setPixelRatio(dataWidth / dataHeight)
   camera.aspect = (dataWidth / dataHeight)
   camera.updateProjectionMatrix()
 }
