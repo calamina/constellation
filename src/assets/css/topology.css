@@ -10,6 +10,7 @@
   width: fit-content;
   /* height: 4rem; */
   border: var(--border);
+  transition: background-color 0.15s;
 
   &>div {
     display: flex;

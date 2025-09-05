@@ -2,6 +2,7 @@ import * as THREE from "three"
 import { gsap } from "gsap";
 import ScrambleTextPlugin from "gsap/ScrambleTextPlugin";
 import data from './assets/data.json'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 gsap.registerPlugin(ScrambleTextPlugin)
 
 const COLORS = { black: "#000000" }
@@ -19,29 +20,38 @@ type StarName = 'star1' | 'star2' | 'star3'
 let clock = new THREE.Clock();
 let delta = 0;
 let interval = 1 / 120;
+let isInteractingControls = false
+
+// SIZE
+let dataWidth = document.querySelector(".data")?.getBoundingClientRect().width ?? 0
+let dataHeight = document.querySelector(".data")?.getBoundingClientRect().height ?? 0
 
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true })
-renderer.setPixelRatio(window.devicePixelRatio)
-renderer.setSize(window.innerWidth, window.innerHeight)
+renderer.setPixelRatio(dataWidth / dataHeight)
+
+renderer.setSize(dataWidth, dataHeight - 2)
 renderer.setClearColor(0x000000, 0)
-const vx = document.querySelector(".vx")
-vx?.appendChild(renderer.domElement)
+const dataElement = document.querySelector(".data")
+dataElement?.appendChild(renderer.domElement)
 
 // CAMERA & RAYCASTER
 const camera = new THREE.PerspectiveCamera(
-  50, window.innerWidth / window.innerHeight
+  50, dataWidth / dataHeight
 )
 const raycaster = new THREE.Raycaster
 const pointer = new THREE.Vector2();
 
-camera.position.set(5, 0, 0)
+camera.position.set(4, 0, 0)
 camera.lookAt(0, 0, 0)
 raycaster.setFromCamera(pointer, camera);
 
 // SCENE
 const scene = new THREE.Scene()
-scene.position.y = 0.25
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.update();
+controls.enablePan = false
+controls.enableZoom = false
 
 // STARS
 const star1 = new THREE.Group()
@@ -102,8 +112,10 @@ function rotateStar3() {
 }
 
 function onWindowResize() {
-  renderer.setSize(window.innerWidth, window.innerHeight)
-  camera.aspect = window.innerWidth / window.innerHeight
+  dataWidth = document.querySelector(".data")?.getBoundingClientRect().width ?? 0
+  dataHeight = document.querySelector(".data")?.getBoundingClientRect().height ?? 0
+  renderer.setSize(dataWidth, dataHeight - 2, true)
+  camera.aspect = (dataWidth / dataHeight)
   camera.updateProjectionMatrix()
 }
 
@@ -225,16 +237,6 @@ function setColor() {
   const starname = starState.front.name as StarName
   r?.style.setProperty('--color', data[starname].color);
   r?.style.setProperty('--hue', data[starname].hue + "deg");
-
-  // test border
-  // if (starState.front === star2) {
-  //   r?.style.setProperty('--border', '1px solid #00000055');
-  //   r?.style.setProperty('--border-info', '1px solid #00000033');
-  // }
-  // else {
-  //   r?.style.setProperty('--border', '1px solid #000');
-  //   r?.style.setProperty('--border-info', '1px solid #00000055');
-  // }
 }
 
 function moveStars(direction: "prev" | "next") {
@@ -260,13 +262,14 @@ function moveStars(direction: "prev" | "next") {
       duration: 0.35
     }, 0)
     .to(symbol, {
-      // marginTop: "1.5rem",
       marginTop: "0",
       ease: "back.out",
     }, 0.35)
     .to(
-      [starState.left.position, starState.right.position, starState.front.position], {
-      x: -30, y: 1.5,
+      [starState.left.scale, starState.right.scale, starState.front.scale], {
+      x: 0,
+      y: 0,
+      z: 0,
       onComplete: () => {
         scene.remove(starState.left)
         scene.remove(starState.right)
@@ -274,8 +277,8 @@ function moveStars(direction: "prev" | "next") {
       }
     }, 0)
     .to(
-      [starState.left.position, starState.right.position, starState.front.position],
-      { x: 0, y: 0 },
+      [starState.left.scale, starState.right.scale, starState.front.scale],
+      { x: 1, y: 1, z: 1 },
       0.25)
 }
 
@@ -303,8 +306,8 @@ function updateCoords() {
 }
 
 function raycast(e: MouseEvent) {
-  pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-  pointer.y = - (e.clientY / window.innerHeight) * 2 + 1;
+  pointer.x = (e.clientX / window.innerWidth) * 2 - 1.01;
+  pointer.y = - (e.clientY / window.innerHeight) * 2 + 0.85;
   raycaster.setFromCamera(pointer, camera);
   const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
   const intersects = raycaster.intersectObjects([core]);
@@ -321,38 +324,69 @@ function raycast(e: MouseEvent) {
 }
 
 function raycastinfo(e: MouseEvent) {
-  pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-  pointer.y = - (e.clientY / window.innerHeight) * 2 + 1;
+  pointer.x = (e.clientX / window.innerWidth) * 2 - 1.01;
+  pointer.y = - (e.clientY / window.innerHeight) * 2 + 0.85;
   raycaster.setFromCamera(pointer, camera);
   const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
   const focus: HTMLElement | null = document.querySelector('.coreFocus')
+  const danger: HTMLElement | null = document.querySelector(".danger");
   const intersects = raycaster.intersectObjects([core]);
+  const path = document.querySelectorAll(".path");
+  const topology = document.querySelector(".topology");
   intersects.forEach((_e: any) => {
     document.querySelector('body')!.style.cursor = "pointer"
     focus!.style.opacity = '1';
+    danger!.style.display = "none";
+    [...path, topology].forEach((el) => el?.classList.add("activated"))
   })
   if (!intersects || intersects.length === 0) {
     document.querySelector('body')!.style.cursor = "default"
     focus!.style.opacity = '0';
+    danger!.style.display = "flex";
+    [...path, topology].forEach((el) => el?.classList.remove("activated"));
   }
 }
 
+controls.addEventListener("start", () => {
+  isInteractingControls = true
+})
+controls.addEventListener("end", () => {
+  setTimeout(() => {
+    isInteractingControls = false
+  }, 1000);
+})
+
 // ANIMATE
 function animate() {
+  const danger: HTMLElement | null = document.querySelector(".danger");
+  const control: HTMLElement | null = document.querySelector(".control");
+  const coords: NodeListOf<HTMLElement> = document.querySelectorAll(".coord");
   const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
-  if (core.material.opacity === 0.11) {
+  const coreFocus: HTMLElement | null = document.querySelector(".coreFocus")
+  if (core.material.opacity === 0.11 || coreFocus?.style.opacity === "1" || isInteractingControls) {
     starState.front.rotation.y -= 0.00075
     starState.front.rotation.z -= 0.00075
+    danger!.style.display = "none";
+    if (core.material.opacity === 0.11) {
+      control!.style.display = "flex";
+      [...coords].forEach(coord => coord.style.display = "none");
+    }
   }
-  else if (starState.front === star1) {
-    rotateStar1()
-  } else if (starState.front === star2) {
-    rotateStar2()
-  } else {
-    rotateStar3()
+  else {
+    danger!.style.display = "flex";
+    control!.style.display = "none";
+    [...coords].forEach(coord => coord.style.display = "flex");
+    if (starState.front === star1) {
+      rotateStar1()
+    } else if (starState.front === star2) {
+      rotateStar2()
+    } else {
+      rotateStar3()
+    }
   }
 
   requestAnimationFrame(animate)
+  controls.update();
   delta += clock.getDelta();
   if (delta > interval) {
     renderer.render(scene, camera)
@@ -392,7 +426,7 @@ function fade() {
   tl
     .to(document.body, { autoAlpha: 1, })
     .to(load, {
-      width: isMobile ? "95vw" : "40vw",
+      width: isMobile ? "calc(100vw - 1rem)" : "40vw",
       duration: 0.8,
       delay: 0.2,
       ease: "power1.out"
@@ -446,6 +480,28 @@ function updateGraphData() {
   }, 0)
 }
 
+function updateSuccess() {
+  const control: HTMLElement | null = document.querySelector(".control")
+  const tl = gsap.timeline({ repeat: -1 })
+  tl
+    .to(control?.querySelector("p") ?? [], {
+      scrambleText: {
+        text: "core recharged ⠞ [(under control)]",
+        chars: "⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠭⠽⠵",
+      },
+      duration: 3,
+    })
+    .to(control?.querySelector("p") ?? [], {
+      scrambleText: {
+        text: "core recharged ⠞ [(under control)]",
+        chars: "⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠭⠽⠵",
+        rightToLeft: true
+      },
+      reversed: true,
+      duration: 3,
+    })
+}
+
 // INIT
 fade()
 createCore()
@@ -457,3 +513,4 @@ scene.add(star1)
 animate()
 updateCoords()
 updateGraphData()
+updateSuccess()
