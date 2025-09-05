@@ -67,9 +67,9 @@
     place-items: center;
     border-top-right-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
+    overflow: hidden;
 
     p {
-      overflow: hidden;
       padding: 0;
       margin: 0;
       padding-right: 0.1rem;
@@ -91,6 +91,8 @@
     gap: 1rem;
   }
 }
+
+
 
 /* ANIMATION */
 @keyframes baranim {

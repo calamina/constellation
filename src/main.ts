@@ -405,6 +405,7 @@ function fade() {
     }, "<")
     .to(load, {
       autoAlpha: 0,
+      display: "none",
       duration: 0
     })
     .to(ui, {

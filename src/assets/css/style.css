@@ -467,16 +467,6 @@ body {
   }
 }
 
-.controls {
-  left: 0;
-  right: 0;
-  width: 40vw;
-  justify-content: space-between;
-  display: flex;
-  transition: width 0.3s;
-  transform-origin: 0% 0%;
-}
-
 .coreFocus {
   opacity: 0;
   position: absolute;
@@ -532,6 +522,16 @@ body {
   }
 }
 
+.controls {
+  left: 0;
+  right: 0;
+  width: 40vw;
+  justify-content: space-between;
+  display: flex;
+  transition: width 0.3s;
+  transform-origin: 0% 0%;
+}
+
 button {
   pointer-events: initial;
   padding: 0 1rem;
@@ -555,18 +555,38 @@ button {
 
 /* RESPONSIVE */
 @media (max-width: 1250px) {
-  .controls {
-    width: 95vw;
-    width: 80vw;
+  html {
+    font-size: 16px;
   }
 
-  .data {
-    width: 80vw;
-    height: 80vh;
+  .ui {
+    display: grid;
+    grid-template-rows: auto 4rem;
+    grid-template-columns: 100%;
+    gap: 2rem;
+    padding: 2rem 0.5rem 2rem;
+    height: 100dvh;
+  }
+
+  .data,
+  .controls {
+    width: 100%;
+    height: 100%;
   }
 
   .desktop {
-    /* display: none; */
+    display: none;
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  button {
+    height: 4rem;
+    width: 100%;
   }
 }
 
