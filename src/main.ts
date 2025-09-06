@@ -3,18 +3,9 @@ import { gsap } from "gsap";
 import ScrambleTextPlugin from "gsap/ScrambleTextPlugin";
 import data from './assets/data.json'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { DOM, COLORS, isMobile } from "./assets/util";
+import type { StarName, Star, StarData } from "./assets/util";
 gsap.registerPlugin(ScrambleTextPlugin)
-
-const COLORS = { black: "#000000" }
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-interface starGroup {
-  front: THREE.Group<THREE.Object3DEventMap>;
-  left: THREE.Group<THREE.Object3DEventMap>;
-  right: THREE.Group<THREE.Object3DEventMap>;
-}
-
-type StarName = 'star1' | 'star2' | 'star3'
 
 // FPS
 let clock = new THREE.Clock();
@@ -23,8 +14,8 @@ let interval = 1 / 120;
 let isInteractingControls = false
 
 // SIZE
-let dataWidth = document.querySelector(".data")?.getBoundingClientRect().width ?? 0
-let dataHeight = document.querySelector(".data")?.getBoundingClientRect().height ?? 0
+let dataWidth = DOM.data?.getBoundingClientRect().width ?? 0
+let dataHeight = DOM.data?.getBoundingClientRect().height ?? 0
 
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -32,8 +23,7 @@ renderer.setPixelRatio(dataWidth / dataHeight)
 
 renderer.setSize(dataWidth, dataHeight - 2)
 renderer.setClearColor(0x000000, 0)
-const dataElement = document.querySelector(".data")
-dataElement?.appendChild(renderer.domElement)
+DOM.data?.appendChild(renderer.domElement)
 
 // CAMERA & RAYCASTER
 const camera = new THREE.PerspectiveCamera(
@@ -42,7 +32,7 @@ const camera = new THREE.PerspectiveCamera(
 const raycaster = new THREE.Raycaster
 const pointer = new THREE.Vector2();
 
-camera.position.set(4, 0, 0)
+camera.position.set(Math.PI + 0.86, 0, 0)
 camera.lookAt(0, 0, 0)
 raycaster.setFromCamera(pointer, camera);
 
@@ -51,7 +41,6 @@ const scene = new THREE.Scene()
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.update();
 controls.enablePan = false
-// controls.enableZoom = false
 
 // STARS
 const star1 = new THREE.Group()
@@ -60,21 +49,41 @@ const star2 = new THREE.Group()
 star2.name = "star2"
 const star3 = new THREE.Group()
 star3.name = "star3"
-let starState: starGroup = { front: star1, left: star2, right: star3 }
+
+const stars: Star[] = [
+  {
+    name: "star1",
+    star: star1,
+    rotate: rotateStar1,
+    data: data.star1
+  },
+  {
+    name: "star2",
+    star: star2,
+    rotate: rotateStar2,
+    data: data.star2,
+  },
+  {
+    name: "star3",
+    star: star3,
+    rotate: rotateStar3,
+    data: data.star3,
+  }
+]
+
+let activeStar: Star = stars[0]
 
 // EVENTS
 window.addEventListener('pointerdown', raycast);
 window.addEventListener('pointermove', raycastinfo);
 window.addEventListener("resize", onWindowResize)
-document.querySelector("#next")?.addEventListener("click", next)
-document.querySelector("#previous")?.addEventListener("click", previous)
+DOM.next?.addEventListener("click", next)
+DOM.previous?.addEventListener("click", previous)
+controls.addEventListener("start", () => isInteractingControls = true)
+controls.addEventListener("end", () => setTimeout(() => isInteractingControls = false, 1000))
 document.addEventListener('keydown', (event) => {
-  switch (event.key) {
-    case "ArrowLeft":
-      return previous()
-    case "ArrowRight":
-      return next()
-  }
+  if (event.key === "ArrowLeft") previous()
+  else if (event.key === "ArrowRight") next()
 });
 
 function rotateStar1() {
@@ -112,8 +121,8 @@ function rotateStar3() {
 }
 
 function onWindowResize() {
-  dataWidth = document.querySelector(".data")?.getBoundingClientRect().width ?? 0
-  dataHeight = document.querySelector(".data")?.getBoundingClientRect().height ?? 0
+  dataWidth = DOM.data?.getBoundingClientRect().width ?? 0
+  dataHeight = DOM.data?.getBoundingClientRect().height ?? 0
   renderer.setSize(dataWidth, dataHeight - 2)
   renderer.setPixelRatio(dataWidth / dataHeight)
   camera.aspect = (dataWidth / dataHeight)
@@ -192,107 +201,113 @@ function makeDemiSphere(radius: number, color: string) {
 }
 
 function next() {
-  starState = { front: starState.right, left: starState.front, right: starState.left }
-  updateStars("next")
+  const index = stars.indexOf(activeStar)
+  const nextStar = stars[index === stars.length - 1 ? 0 : index + 1]
+  moveStars("next", nextStar)
 }
 
 function previous() {
-  starState = { front: starState.left, left: starState.right, right: starState.front }
-  updateStars("prev")
+  const index = stars.indexOf(activeStar)
+  const prevStar = stars[index === 0 ? stars.length - 1 : index - 1]
+  moveStars("prev", prevStar)
 }
 
-function updateStars(direction: "prev" | "next") {
-  moveStars(direction)
-  setColor()
-  setData(starState.front.name as StarName)
-}
-
-function setData(star: StarName) {
-  const active = data[star]
-  const titleElements = Array.from(document.querySelector('.main')?.children ?? [])
-  const infoElements = Array.from(document.querySelector('.type')?.children ?? [])
+function setData(data: StarData) {
+  const titleElements = Array.from(DOM.main?.children ?? [])
+  const infoElements = Array.from(DOM.type?.children ?? [])
   const [name, scientific, galaxy] = titleElements
   const [distance, type, inhab] = infoElements
-  const index = document.querySelector('#index')
-  const units = document.querySelectorAll('.unit') ?? []
 
   const tl = gsap.timeline({ defaults: { duration: 0.3, scrambleText: { text: "", tweenLength: false, chars: "lowerCase" } } })
 
-  tl.call(() => { index!.innerHTML = active.index.toString() })
-  tl.to(name, { scrambleText: { text: active.name, }, }, 0)
-  tl.to(scientific, { scrambleText: { text: active.scientific, }, }, 0)
-  tl.to(galaxy, { scrambleText: { text: active.galaxy, }, }, 0)
-  tl.to(distance, { scrambleText: { text: active.distance, }, }, 0)
-  tl.to(type, { scrambleText: { text: active.type, }, }, 0)
-  tl.to(inhab, { scrambleText: { text: active.inhab, }, }, 0)
-  units.forEach((_unit, index) =>
-    tl.to(units[index], { scrambleText: { text: '_:0' + active.units[index].toString(), }, }, 0)
+  tl.call(() => { DOM.index!.innerHTML = data.index.toString() })
+  tl.to(name, {
+    scrambleText: { text: data.name, },
+  }, 0)
+  tl.to(scientific, {
+    scrambleText: { text: data.scientific, },
+  }, 0)
+  tl.to(galaxy, {
+    scrambleText: { text: data.galaxy, },
+  }, 0)
+  tl.to(distance, {
+    scrambleText: { text: data.distance, },
+  }, 0)
+  tl.to(type, {
+    scrambleText: { text: data.type, },
+  }, 0)
+  tl.to(inhab, {
+    scrambleText: { text: data.inhab, },
+  }, 0)
+
+  DOM.units.forEach((_unit, index) =>
+    tl.to(DOM.units[index], {
+      scrambleText: { text: '_:0' + data.units[index].toString(), },
+    }, 0)
   )
-  const topos = Array.from(document.querySelector('.topology')?.children ?? [])
+  const topos = Array.from(DOM.topology?.children ?? [])
   topos.forEach(el => el.classList.add('topohidden'))
-  topos[active.index - 1].classList.remove('topohidden')
+  topos[data.index - 1].classList.remove('topohidden')
 }
 
-function setColor() {
-  const r: HTMLElement | null = document.querySelector(':root');
-  const starname = starState.front.name as StarName
-  r?.style.setProperty('--color', data[starname].color);
-  r?.style.setProperty('--hue', data[starname].hue + "deg");
+function setColor(name?: StarName) {
+  const starname = name ?? activeStar.name
+  DOM.root?.style.setProperty('--color', data[starname].color);
+  DOM.root?.style.setProperty('--hue', data[starname].hue + "deg");
 }
 
-function moveStars(direction: "prev" | "next") {
-  const index = document.querySelector('.index')
-  const symbol = document.querySelector('.symbol')
+function moveStars(direction: "prev" | "next", star: Star) {
   const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
-
   core.material.opacity = 1
   const tl: GSAPTimeline = gsap.timeline({ defaults: { duration: 0.25, ease: "power3.inOut" } })
+
+  setColor(star.name)
+  setData(star.data)
+
   tl
-    .to(index, {
+    .to(DOM.indexBox, {
       translateX: direction === "prev" ? "1rem" : "-1rem",
       ease: "power3.out",
-      duration: 0.35
+      duration: 0.35,
     })
-    .to(index, {
+    .to(DOM.indexBox, {
       translateX: 0,
       ease: "back.out",
     }, 0.35)
-    .to(symbol, {
+    .to(DOM.symbol, {
       marginTop: direction === "next" ? "1.5rem" : "-1.5rem",
       ease: "power3.out",
       duration: 0.35
     }, 0)
-    .to(symbol, {
+    .to(DOM.symbol, {
       marginTop: "0",
       ease: "back.out",
     }, 0.35)
     .to(
-      [starState.left.scale, starState.right.scale, starState.front.scale], {
-      x: 0,
-      y: 0,
-      z: 0,
+      [...stars.map(star => star.star.scale)], {
+      x: 0, y: 0, z: 0,
       onComplete: () => {
-        scene.remove(starState.left)
-        scene.remove(starState.right)
-        scene.add(starState.front)
+        scene.remove(activeStar.star)
+        activeStar = star
+        scene.add(activeStar.star)
       }
     }, 0)
     .to(
-      [starState.left.scale, starState.right.scale, starState.front.scale],
+      [...stars.map(star => star.star.scale)],
       { x: 1, y: 1, z: 1 },
       0.25)
 }
 
 function updateCoords() {
-  const timedate = document.querySelector(".timedate")
-  const elements = document.querySelectorAll('.coord')
-  const coords = ['ϰ', 'λ', 'ϟ']
+  const symbols = ['ϰ', 'λ', 'ϟ']
   setInterval(
     () => {
-      elements.forEach((e, index) =>
+      const ref = [camera.position.x, camera.position.y, camera.position.z]
+      DOM.coords.forEach((e, index) =>
         gsap.to(e, {
           scrambleText: {
-            text: coords[index] + "_" + (Math.random() * 999).toString(),
+            text: symbols[index] + "_" + ref[index],
+            // text: symbols[index] + "_" + (Math.random() * 999).toString(),
             chars: "0123456798",
             revealDelay: 0.2
           },
@@ -300,92 +315,82 @@ function updateCoords() {
         }))
       const date = new Date(Date.now() + 32123456789099)
       const formated = `α:_ 0εx${date.getSeconds()}`
-      timedate!.innerHTML = formated
+      DOM.timedate!.innerHTML = formated
     },
     1500
   )
 }
 
 function raycast(e: MouseEvent) {
-  pointer.x = (e.clientX / window.innerWidth) * 2 - 1.01;
-  pointer.y = - (e.clientY / window.innerHeight) * 2 + 0.85;
-  raycaster.setFromCamera(pointer, camera);
+  getPointer(e)
   const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
   const intersects = raycaster.intersectObjects([core]);
   intersects.forEach((_e: any) => {
-    if (core.material.opacity === 0.11) {
-      core.material.opacity = 1
-      setColor()
-    } else {
-      core.material.opacity = 0.11
-      var r: HTMLElement | null = document.querySelector(':root');
-      r?.style.setProperty('--color', 'transparent');
-    }
+    swingFrontStar()
+    toggleCore(core)
+  })
+}
+
+function toggleCore(core: THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>) {
+  const coreActive = core?.material?.opacity === 1
+
+  if (!coreActive) {
+    setColor()
+    core.material.opacity = 1;
+    timeAnimations(1)
+  } else {
+    DOM.root?.style.setProperty('--color', 'transparent');
+    core.material.opacity = 0.11;
+    timeAnimations(0.1)
+  }
+}
+
+function swingFrontStar() {
+  const rotation = activeStar.star.rotation
+  gsap.to(rotation, {
+    x: rotation.x + (Math.PI / ((Math.random() + 0.3) * 3)),
+    y: rotation.y + (Math.PI / ((Math.random() + 0.3) * 3)),
+    z: rotation.z + (Math.PI / ((Math.random() + 0.3) * 3)),
+    duration: 1,
+    ease: "power2.out"
+  })
+}
+
+function timeAnimations(time: number) {
+  const animationNames = ["orbit", "pulse", "baranim", "lineanim"];
+  DOM.animations.forEach((animation: CSSAnimation) => {
+    if (animationNames.includes(animation.animationName))
+      animation.playbackRate = time;
   })
 }
 
 function raycastinfo(e: MouseEvent) {
-  pointer.x = (e.clientX / window.innerWidth) * 2 - 1.01;
-  pointer.y = - (e.clientY / window.innerHeight) * 2 + 0.85;
-  raycaster.setFromCamera(pointer, camera);
+  getPointer(e)
   const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
-  const focus: HTMLElement | null = document.querySelector('.coreFocus')
-  const danger: HTMLElement | null = document.querySelector(".danger");
   const intersects = raycaster.intersectObjects([core]);
-  const path = document.querySelectorAll(".path");
-  const topology = document.querySelector(".topology");
   intersects.forEach((_e: any) => {
-    document.querySelector('body')!.style.cursor = "pointer"
-    focus!.style.opacity = '1';
-    danger!.style.display = "none";
-    [...path, topology].forEach((el) => el?.classList.add("activated"))
+    DOM.body!.style.cursor = "pointer"
+    DOM.coreFocus!.style.opacity = '1';
+    DOM.danger!.style.display = "none";
+    [...DOM.path, DOM.topology].forEach((el) => el?.classList.add("activated"))
   })
   if (!intersects || intersects.length === 0) {
-    document.querySelector('body')!.style.cursor = "default"
-    focus!.style.opacity = '0';
-    danger!.style.display = "flex";
-    [...path, topology].forEach((el) => el?.classList.remove("activated"));
+    DOM.body!.style.cursor = "default"
+    DOM.coreFocus!.style.opacity = '0';
+    DOM.danger!.style.display = "flex";
+    [...DOM.path, DOM.topology].forEach((el) => el?.classList.remove("activated"));
   }
 }
 
-controls.addEventListener("start", () => {
-  isInteractingControls = true
-})
-controls.addEventListener("end", () => {
-  setTimeout(() => {
-    isInteractingControls = false
-  }, 1000);
-})
+function getPointer(e: MouseEvent) {
+  pointer.x = (e.clientX / window.innerWidth) * 2 - 1.01;
+  pointer.y = - (e.clientY / window.innerHeight) * 2 + 0.85;
+  raycaster.setFromCamera(pointer, camera);
+}
 
 // ANIMATE
 function animate() {
-  const danger: HTMLElement | null = document.querySelector(".danger");
-  const control: HTMLElement | null = document.querySelector(".control");
-  const coords: NodeListOf<HTMLElement> = document.querySelectorAll(".coord");
-  const core = scene.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>
-  const coreFocus: HTMLElement | null = document.querySelector(".coreFocus")
-  if (core.material.opacity === 0.11 || coreFocus?.style.opacity === "1" || isInteractingControls) {
-    starState.front.rotation.y -= 0.00075
-    starState.front.rotation.z -= 0.00075
-    danger!.style.display = "none";
-    if (core.material.opacity === 0.11) {
-      control!.style.display = "flex";
-      [...coords].forEach(coord => coord.style.display = "none");
-    }
-  }
-  else {
-    danger!.style.display = "flex";
-    control!.style.display = "none";
-    [...coords].forEach(coord => coord.style.display = "flex");
-    if (starState.front === star1) {
-      rotateStar1()
-    } else if (starState.front === star2) {
-      rotateStar2()
-    } else {
-      rotateStar3()
-    }
-  }
-
+  updateUI()
   requestAnimationFrame(animate)
   controls.update();
   delta += clock.getDelta();
@@ -395,64 +400,76 @@ function animate() {
   }
 }
 
-function fade() {
-  const ui = document.querySelector('.data')
-  const vx = document.querySelector('.vx')
-  const ctrl = document.querySelector('.controls')
-  const load = document.querySelector('.loading')
-  const num = document.querySelector('.loadpercent')
-  const focus = document.querySelector('.coreFocus')
-  const tl = gsap.timeline({ defaults: { duration: .3 } });
+function updateUI() {
+  const coreFocusVisible = DOM.coreFocus?.style.opacity === "1"
+  const coreDisabled = (scene?.getObjectByName("core") as THREE.Mesh<THREE.SphereGeometry, THREE.MeshLambertMaterial, THREE.Object3DEventMap>)?.material?.opacity !== 1
 
+  if (coreDisabled || coreFocusVisible || isInteractingControls) {
+    DOM.danger!.style.display = "none";
+    if (coreDisabled) {
+      DOM.control!.style.display = "flex";
+      [...DOM.coords].forEach(coord => coord.style.display = "none");
+    }
+  }
+  else {
+    DOM.danger!.style.display = "flex";
+    DOM.control!.style.display = "none";
+    [...DOM.coords].forEach(coord => coord.style.display = "flex");
+    activeStar.rotate()
+  }
+}
+
+function fade() {
+  const tl = gsap.timeline({ defaults: { duration: .3 } });
   tl
-    .set(ui, {
+    .set(DOM.ui, {
       scaleY: 0,
     })
-    .set(vx, {
+    .set(DOM.vx, {
       scale: 0.8,
       translateY: '1rem',
       opacity: 0
     })
-    .set(ctrl, {
+    .set(DOM.ctrl, {
       scaleY: 0,
       opacity: 0
     })
     .set(["p", ".horisep"], {
       opacity: 0
     })
-    .set(focus, {
+    .set(DOM.coreFocus, {
       display: "none"
     })
 
   tl
-    .to(document.body, { autoAlpha: 1, })
-    .to(load, {
+    .to(DOM.body, { autoAlpha: 1, })
+    .to(DOM.load, {
       width: isMobile ? "calc(100vw - 1rem)" : "40vw",
       duration: 0.8,
       delay: 0.2,
       ease: "power1.out"
     })
-    .to(num, {
+    .to(DOM.num, {
       textContent: 100,
       snap: { textContent: 1 },
       duration: 0.8,
       ease: "power1.out"
     }, "<")
-    .to(load, {
+    .to(DOM.load, {
       autoAlpha: 0,
       display: "none",
       duration: 0
     })
-    .to(ui, {
+    .to(DOM.ui, {
       scaleY: 1,
       duration: 0.7,
       ease: "power2.out"
     })
-    .to(ctrl, {
+    .to(DOM.ctrl, {
       scaleY: 1,
       opacity: 1
     }, "< 0.25")
-    .to(vx, {
+    .to(DOM.vx, {
       scale: 1,
       translateY: 0,
       opacity: 1,
@@ -463,15 +480,14 @@ function fade() {
     .to(["p", ".horisep"], {
       opacity: 1
     }, "< -0.1")
-    .to(focus, {
+    .to(DOM.coreFocus, {
       display: "grid"
     }, "< -0.1")
 }
 
 function updateGraphData() {
-  const data = document.querySelector('.graphdata')
   const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.15 })
-  tl.to(data, {
+  tl.to(DOM.graphData, {
     scrambleText: {
       text: "⠥⠏⠺⠁⠗⠙⠎",
       chars: "⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠭⠽⠵",
@@ -482,17 +498,16 @@ function updateGraphData() {
 }
 
 function updateSuccess() {
-  const control: HTMLElement | null = document.querySelector(".control")
   const tl = gsap.timeline({ repeat: -1 })
   tl
-    .to(control?.querySelector("p") ?? [], {
+    .to(DOM.controlText, {
       scrambleText: {
         text: "core recharged ⠞ [(under control)]",
         chars: "⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠭⠽⠵",
       },
       duration: 3,
     })
-    .to(control?.querySelector("p") ?? [], {
+    .to(DOM.controlText, {
       scrambleText: {
         text: "core recharged ⠞ [(under control)]",
         chars: "⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠭⠽⠵",

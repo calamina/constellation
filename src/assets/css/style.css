@@ -8,6 +8,8 @@
 }
 
 :root {
+  --animation-time: 3s;
+  --animation-time-slow: 1.5s;
   --color: oklch(60% 0.25 30 / 0.6);
   --hue: 180deg;
   --border: 1px solid #000;
@@ -395,7 +397,7 @@ body {
     height: 75%;
     border: 1px solid #00000055;
     border-radius: 100%;
-    animation: 3s linear infinite orbit;
+    animation: var(--animation-time) linear infinite orbit;
   }
 
   .planet {
@@ -417,19 +419,19 @@ body {
   &.radar1 {
     width: 25%;
     height: 25%;
-    animation: pulse 1.5s infinite alternate;
+    animation: pulse var(--animation-time-slow) infinite alternate;
   }
 
   &.radar2 {
     width: 50%;
     height: 50%;
-    animation: pulse 1.5s 0.2s infinite alternate;
+    animation: pulse var(--animation-time-slow) 0.2s infinite alternate;
   }
 
   &.radar3 {
     width: 75%;
     height: 75%;
-    animation: pulse 1.5s 0.4s infinite alternate;
+    animation: pulse var(--animation-time-slow) 0.4s infinite alternate;
   }
 }
 

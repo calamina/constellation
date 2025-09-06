@@ -22,7 +22,7 @@
     background-color: #000000;
     opacity: 0.3;
     transform-origin: 50%;
-    animation: lineanim 1s infinite alternate-reverse ease-in-out;
+    animation: lineanim var(--animation-time-slow) infinite alternate-reverse ease-in-out;
   }
 }
 
@@ -42,11 +42,11 @@
   }
 
   .bar:nth-child(even) {
-    animation: baranim 1s infinite alternate-reverse ease-in-out;
+    animation: baranim var(--animation-time-slow) infinite alternate-reverse ease-in-out;
   }
 
   .bar:nth-child(odd) {
-    animation: baranim 1s 0.3s infinite alternate-reverse ease-in-out;
+    animation: baranim var(--animation-time-slow) 0.3s infinite alternate-reverse ease-in-out;
   }
 }
 
