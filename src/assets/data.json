@@ -1,5 +1,5 @@
-{
-  "star1": {
+[
+  {
     "index": 1,
     "color": "oklch(60% 0.25 30 / 0.6)",
     "hue": 180,
@@ -11,7 +11,7 @@
     "inhab": "Non-inhabitable",
     "units": [1, 1, 0]
   },
-  "star2": {
+  {
     "index": 3,
     "color": "oklch(60% 0.25 280 / 0.6)",
     "hue": 140,
@@ -23,7 +23,7 @@
     "inhab": "Non-inhabitable",
     "units": [1, 3, 0]
   },
-  "star3": {
+  {
     "index": 2,
     "color" : "oklch(60% 0.25 170 / 0.6)",
     "hue": 160,
@@ -35,4 +35,4 @@
     "inhab": "???",
     "units": [1, 2, 2]
   }
-}
+]

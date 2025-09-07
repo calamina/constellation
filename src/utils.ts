@@ -1,27 +1,3 @@
-import * as THREE from "three"
-
-export interface Star {
-  name: StarName;
-  star: THREE.Group<THREE.Object3DEventMap>;
-  rotate: () => void;
-  data: StarData
-}
-
-export interface StarData {
-  index: number,
-  color: string,
-  hue: number,
-  name: string,
-  scientific: string,
-  galaxy: string,
-  distance: string,
-  type: string,
-  inhab: string,
-  units: number[]
-}
-
-export type StarName = 'star1' | 'star2' | 'star3'
-
 export const COLORS = { black: "#000000" }
 
 export const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
