@@ -1,10 +1,12 @@
+@import './reset.css' layer(reset);
 @import './graphs.css';
 @import './topology.css';
 
+@layer reset, default;
+
 @font-face {
   font-family: "mono";
-  src:
-    url("../mononoki-Regular.otf") format("opentype"),
+  src: url("../mononoki-Regular.otf") format("opentype");
 }
 
 :root {
@@ -16,25 +18,58 @@
   --border-info: 1px solid #00000055;
 }
 
-* {
-  box-sizing: border-box;
-  font-family: 'mono';
+@layer default {
+  * {
+    box-sizing: border-box;
+    font-family: 'mono';
+  }
+
+  html {
+    background-color: #cdf;
+  }
+
+  body {
+    font-weight: 400;
+    font-style: normal;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    visibility: hidden;
+  }
+
+  canvas {
+    max-height: 100%;
+    max-width: 100%;
+  }
+
+  p {}
+
+  button {
+    pointer-events: initial;
+    padding: 0 1rem;
+    height: 2.5rem;
+    outline: none;
+    cursor: pointer;
+    background-color: var(--color);
+    border: none;
+    border: var(--border);
+    font-size: 1rem;
+    transition: background-color 0.3s, padding 0.2s;
+
+    &:hover {
+      padding: 0.5rem 2rem;
+    }
+
+    & span {
+      color: #00000070;
+    }
+  }
 }
 
-html {
-  background-color: #cdf;
-}
 
-body {
-  font-weight: 400;
-  font-style: normal;
-  width: 100vw;
-  height: 100vh;
-  padding: 0;
-  margin: 0;
-  overflow: hidden;
-  visibility: hidden;
-}
+
 
 .loading {
   left: 0;
@@ -111,8 +146,6 @@ body {
     font-size: 0.9rem;
     opacity: 0.5;
     line-height: 1.2rem;
-    margin: 0;
-    padding: 0;
   }
 }
 
@@ -126,11 +159,8 @@ body {
 
   p {
     text-decoration: underline;
-    width: 100%;
     font-size: 1.05rem;
     line-height: 1.2rem;
-    margin: 0;
-    padding: 0;
   }
 }
 
@@ -201,10 +231,8 @@ body {
 
   p {
     font-size: 0.9rem;
-    margin: 0;
     padding: 0.15rem 0.4rem;
     border: var(--border);
-    flex-shrink: 0;
   }
 
   .unit {
@@ -214,7 +242,6 @@ body {
   .symbol {
     width: fit-content;
     height: fit-content;
-    /* border: var(--border); */
     align-items: center;
     justify-content: center;
     line-height: 1.75rem;
@@ -224,8 +251,6 @@ body {
     margin-right: 3.5px;
     margin-bottom: 0.25rem;
     padding-top: 0.15rem;
-    /* width: 1.25rem; */
-    /* width: 3rem; */
     position: relative;
 
     div {
@@ -242,7 +267,6 @@ body {
 
     p {
       padding-top: 0.25rem;
-      /* font-size: 0.8rem; */
       line-height: 1.5rem;
       text-align: center;
       width: 3.75rem;
@@ -250,8 +274,6 @@ body {
       &:first-of-type {
         border: var(--border-info);
         background-color: #00000011;
-        /* border-right: none; */
-        /* border-top-left-radius: 0.5rem; */
         border-bottom-left-radius: 0.5rem;
         border-top-right-radius: 1rem;
         border-bottom-right-radius: 0;
@@ -260,14 +282,11 @@ body {
       &:last-of-type {
         margin-left: -1px;
         border: var(--border);
-        /* border-left: none; */
         border-top-right-radius: 0.5rem;
         border-top-left-radius: 1rem;
         border-bottom-right-radius: 0;
         border-bottom-left-radius: 0;
       }
-
-      /* border: none; */
     }
   }
 
@@ -328,8 +347,6 @@ body {
     font-size: 0.8rem;
     opacity: 0.5;
     line-height: 1rem;
-    margin: 0;
-    padding: 0;
   }
 }
 
@@ -346,8 +363,6 @@ body {
   p {
     font-size: 0.9rem;
     line-height: 1rem;
-    margin: 0;
-    padding: 0;
   }
 }
 
@@ -446,14 +461,13 @@ body {
   display: flex;
   justify-content: space-between;
   padding: 0.25rem;
+  align-items: center;
   box-sizing: border-box;
   overflow: hidden;
   gap: 1rem;
   height: 1.5rem;
 
   p {
-    margin: 0;
-    padding: 0;
     font-size: 0.9rem;
     width: 16ch;
     overflow: hidden;
@@ -496,17 +510,14 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 0.25rem 0.75rem;
-    margin: 0;
     border-bottom-right-radius: 0.5rem;
     border-top-left-radius: 0.5rem;
   }
 
   span:not(#index) {
     display: block;
-    /* width: 1px; */
     height: 1rem;
     border-left: var(--border);
-    /* background-color: #000000; */
   }
 
   #index {
@@ -602,34 +613,7 @@ body {
   width: 40vw;
   justify-content: space-between;
   display: flex;
-  /* transition: width 0.3s; */
   transform-origin: 0% 0%;
-}
-
-button {
-  pointer-events: initial;
-  padding: 0 1rem;
-  height: 2.5rem;
-  outline: none;
-  cursor: pointer;
-  background-color: var(--color);
-  border: none;
-  border: var(--border);
-  font-size: 1rem;
-  transition: background-color 0.3s, padding 0.2s;
-
-  &:hover {
-    padding: 0.5rem 2rem;
-  }
-
-  & span {
-    color: #00000070;
-  }
-}
-
-canvas {
-  max-height: 100%;
-  max-width: 100%;
 }
 
 /* RESPONSIVE */
