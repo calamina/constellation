@@ -1,8 +1,6 @@
-@import './reset.css' layer(reset);
+@import './reset.css';
 @import './graphs.css';
 @import './topology.css';
-
-@layer reset, default;
 
 @font-face {
   font-family: "mono";
@@ -13,63 +11,66 @@
   --animation-time: 3s;
   --animation-time-slow: 1.5s;
   --color: oklch(60% 0.25 30 / 0.6);
+  --borderColor: oklch(0% 0 0 / 0.2);
   --hue: 180deg;
   --border: 1px solid #000;
+  /* --border: 1px solid var(--borderColor); */
   --border-info: 1px solid #00000055;
 }
 
-@layer default {
-  * {
-    box-sizing: border-box;
-    font-family: 'mono';
-  }
-
-  html {
-    background-color: #cdf;
-  }
-
-  body {
-    font-weight: 400;
-    font-style: normal;
-    width: 100vw;
-    height: 100vh;
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-    visibility: hidden;
-  }
-
-  canvas {
-    max-height: 100%;
-    max-width: 100%;
-  }
-
-  p {}
-
-  button {
-    pointer-events: initial;
-    padding: 0 1rem;
-    height: 2.5rem;
-    outline: none;
-    cursor: pointer;
-    background-color: var(--color);
-    border: none;
-    border: var(--border);
-    font-size: 1rem;
-    transition: background-color 0.3s, padding 0.2s;
-
-    &:hover {
-      padding: 0.5rem 2rem;
-    }
-
-    & span {
-      color: #00000070;
-    }
-  }
+* {
+  box-sizing: border-box;
+  font-family: 'mono';
 }
 
+html {
+  background-color: #cdf;
+}
 
+body {
+  font-weight: 400;
+  font-style: normal;
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  visibility: hidden;
+  display: grid;
+  place-items: center;
+}
 
+canvas {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+p,
+.horisep,
+span:not(.loadpercent) {
+  opacity: 0;
+}
+
+button {
+  pointer-events: initial;
+  padding: 0 1rem;
+  height: 2.5rem;
+  outline: none;
+  cursor: pointer;
+  background-color: var(--color);
+  border: none;
+  border: var(--border);
+  font-size: 1rem;
+  transition: background-color 0.3s, padding 0.2s;
+
+  &:hover {
+    padding: 0.5rem 2rem;
+  }
+
+  & span {
+    color: #00000070;
+  }
+}
 
 .loading {
   left: 0;
@@ -123,7 +124,6 @@
   width: 40vw;
   border: var(--border);
   border-top-right-radius: 0.5rem;
-  /* transition: width 0.3s; */
 }
 
 .maininfo {
@@ -171,37 +171,37 @@
     background-color: #fedfed77;
     text-decoration: underline;
   }
+}
 
-  .coreDanger {
-    animation: dangerMain 10s ease infinite;
-    padding: 0.5rem;
-    position: fixed;
-    display: flex;
-    flex-flow: column;
-    backdrop-filter: hue-rotate(var(--hue));
-    background-color: #fedfed77;
-    outline: 2px solid #fedfed77;
-    outline-offset: 4px;
-    align-items: center;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 666;
-    gap: 0.25rem;
+.coreDanger {
+  animation: dangerMain 10s ease infinite;
+  padding: 0.5rem;
+  position: absolute;
+  display: flex;
+  flex-flow: column;
+  backdrop-filter: hue-rotate(var(--hue));
+  background-color: #fedfed77;
+  outline: 2px solid #fedfed77;
+  outline-offset: 4px;
+  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 666;
+  gap: 0.25rem;
 
-    p {
-      text-align: center;
-      font-size: 0.9rem;
+  p {
+    text-align: center;
+    font-size: 0.9rem;
 
-      &:first-of-type {
-        font-size: 0.8rem;
-        text-align: start;
-      }
+    &:first-of-type {
+      font-size: 0.8rem;
+      text-align: start;
+    }
 
-      &:last-of-type {
-        font-size: 0.8rem;
-        text-align: end;
-      }
+    &:last-of-type {
+      font-size: 0.8rem;
+      text-align: end;
     }
   }
 
@@ -555,6 +555,7 @@
 .coreFocus {
   opacity: 0;
   position: absolute;
+  display: none;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -608,6 +609,8 @@
 }
 
 .controls {
+  transform: scaleY(0);
+  opacity: 0;
   left: 0;
   right: 0;
   width: 40vw;

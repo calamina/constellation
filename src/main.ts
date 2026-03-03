@@ -1,9 +1,9 @@
 import { gsap } from "gsap";
 import ScrambleTextPlugin from "gsap/ScrambleTextPlugin";
-import data from './assets/data.json'
-import { DOM, isMobile } from "./utils";
-import { space } from './space'
+import data from './assets/data.json';
 import type { Star, StarData } from "./models";
+import { space } from './space';
+import { DOM, isMobile } from "./utils";
 gsap.registerPlugin(ScrambleTextPlugin)
 
 const { animate, slowRotate, core, isInteractingControls, isCoreActive, swingFrontStar, replaceStar, raycastClick, raycastHover, getCameraPosition, setCoreOpacity, stars } = space();
@@ -34,14 +34,14 @@ function previous() {
 }
 
 function setData(data: StarData | undefined) {
-  if (!data) return
+  if (!data || !DOM.index) return
   const tl = gsap.timeline({
     defaults: {
       duration: 0.3,
       scrambleText: { text: "", tweenLength: false, chars: "lowerCase" }
     }
   })
-  tl.call(() => { DOM.index!.innerHTML = data.index.toString() });
+  tl.call(() => { DOM.index.innerHTML = data.index.toString() });
 
   setInfo(tl, data);
   setUnits(tl, data);
@@ -55,7 +55,7 @@ function setTopology(data: StarData) {
 }
 
 function setUnits(tl: gsap.core.Timeline, data: StarData) {
-  DOM.units.forEach((unit, index) =>
+  DOM.units?.forEach((unit, index) =>
     tl.to(unit, {
       scrambleText: { text: '_:0' + data.units[index].toString(), },
     }, 0));
@@ -88,8 +88,10 @@ function getInfoElements(): { name: keyof StarData; elt: Element }[] {
 
 function setColor(selectedStar?: Star) {
   const star = selectedStar ?? activeStar
-  DOM.root?.style.setProperty('--color', star.data!.color);
-  DOM.root?.style.setProperty('--hue', star.data!.hue + "deg");
+  if (!star.data) return
+  DOM.root?.style.setProperty('--color', star.data.color);
+  DOM.root?.style.setProperty('--hue', star.data.hue + "deg");
+  // DOM.root?.style.setProperty('--borderColor', star.data.borderColor);
 }
 
 function moveStars(direction: "prev" | "next", star: Star) {
@@ -151,7 +153,7 @@ function toggleCore() {
 
 function timeAnimations(time: number) {
   const animationNames = ["orbit", "pulse", "baranim", "lineanim"];
-  DOM.animations.forEach((animation: CSSAnimation) => {
+  DOM.animations?.forEach((animation: CSSAnimation) => {
     if (animationNames.includes(animation.animationName))
       animation.playbackRate = time;
   })
@@ -262,11 +264,6 @@ function fade() {
     .set(DOM.ui, {
       scaleY: 0,
     })
-    .set(DOM.vx, {
-      scale: 0.8,
-      translateY: '1rem',
-      opacity: 0
-    })
     .set(DOM.ctrl, {
       scaleY: 0,
       opacity: 0
@@ -306,15 +303,7 @@ function fade() {
       scaleY: 1,
       opacity: 1
     }, "< 0.25")
-    .to(DOM.vx, {
-      scale: 1,
-      translateY: 0,
-      opacity: 1,
-      delay: 0.05,
-      duration: 0.6,
-      ease: "power3.out"
-    }, "< 0.1")
-    .to(["p", ".horisep"], {
+    .to(["p", ".horisep", "span"], {
       opacity: 1
     }, "< -0.1")
     .to(DOM.coreFocus, {
@@ -323,6 +312,9 @@ function fade() {
 }
 
 // INIT
-fade()
-animate(updateUI)
-animateData()
+setTimeout(() => {
+  fade()
+  animate(updateUI)
+  animateData()
+}, 4)
+

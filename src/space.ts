@@ -1,13 +1,12 @@
-import * as THREE from "three"
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { DOM, COLORS } from "./utils";
-import { Star } from "./models";
 import gsap from "gsap";
+import * as THREE from "three";
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Star } from "./models";
+import { COLORS, DOM } from "./utils";
 
 export const space = () => {
-
   // FPS
-  let clock = new THREE.Clock();
+  let clock = new THREE.Timer();
   let delta = 0;
   let interval = 1 / 120;
 
@@ -207,7 +206,10 @@ export const space = () => {
     update()
     requestAnimationFrame(() => animate(update))
     controls.update();
+    clock.update()
     delta += clock.getDelta();
+    console.debug("delta", delta)
+    console.debug("interval", interval)
     if (delta > interval) {
       renderer.render(scene, camera)
       delta = delta % interval;

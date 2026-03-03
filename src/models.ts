@@ -1,4 +1,4 @@
-import * as THREE from "three"
+import * as THREE from "three";
 
 export interface Star {
   model: THREE.Group<THREE.Object3DEventMap>;
@@ -9,6 +9,7 @@ export interface Star {
 export interface StarData {
   index: number,
   color: string,
+  borderColor: string,
   hue: number,
   name: string,
   scientific: string,
